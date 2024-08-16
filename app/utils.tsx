@@ -8,8 +8,8 @@ export type Result<T> = {
 };
 export type AppState = {
   page: "login" | "editor";
-  password?: string;
-  username?: string;
+  password: string;
+  username: string;
   moveTo: (page: AppState["page"]) => void;
   update: (callback: UpdateCallback) => void;
 };
@@ -29,6 +29,8 @@ export function useAppContext() {
 export function AppProvider(props: React.PropsWithChildren) {
   const [state, setState] = useImmer<UpdateType>({
     page: "login",
+    username:'',
+    password:''
   });
   const moveTo = useCallback(
     (name: AppState["page"]) => {

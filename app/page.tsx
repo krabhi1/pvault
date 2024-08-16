@@ -2,10 +2,13 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AppProvider, useAppContext } from "./utils";
-import { updateFile, verifyLogin } from "./api-utils";
+import { getFile, updateFile, verifyLogin } from "./api-utils";
 import { useImmer } from "use-immer";
 
 export default function Main() {
+  useEffect(() => {
+    console.log("Main component mounted",process.env);
+  }, []);
   return (
     <AppProvider>
       <Home />
@@ -64,6 +67,25 @@ function Editor() {
   const { update, username, password } = useAppContext();
   const [text, setText] = useImmer({ old: "", new: "" });
 
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function load() {
+    const res = await getFile(username!, password!);
+    console.log(res);
+    if (res.data) {
+      setText((d) => {
+        if (res.data) {
+          d.old = res.data;
+          d.new = res.data;
+        }
+      });
+    } else {
+      alert(res.message);
+    }
+  }
+
   async function handleUpdate() {
     if (text.old !== text.new) {
       const res = await updateFile(username!, password!, text.new);
@@ -85,6 +107,7 @@ function Editor() {
         <input type="checkbox" onChange={(e) => setCanEdit(e.target.checked)} />
       </div>
       <textarea
+        readOnly={!canEdit}
         onChange={(e) =>
           setText((d) => {
             d.new = e.target.value;
