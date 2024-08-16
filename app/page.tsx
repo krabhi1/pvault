@@ -7,7 +7,7 @@ import { useImmer } from "use-immer";
 
 export default function Main() {
   useEffect(() => {
-    console.log("Main component mounted",process.env);
+    console.log(process.env);
   }, []);
   return (
     <AppProvider>
