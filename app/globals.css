@@ -1,5 +1,56 @@
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: self-start;
+    height: 100vh;
+}
+.login {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    gap: 6px;
+    margin-top: 20px;
+}
+.login > input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+button {
+    padding: 6px;
+}
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+}
+.editor .edit{
+    display: flex;
+    gap:6px;
+    align-items: center;
+}
+.editor .edit label {
+    color: #555;
+}
+.editor .edit input {
+    width: 16px;
+    height: 16px;
+}
+.editor textarea {
+    flex: 1;
+    resize: none;
+    outline: none;
+    border: 1px solid #ccc;
 }
