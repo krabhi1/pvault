@@ -1,11 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { Updater, useImmer } from "use-immer";
-export type Result<T> = {
-  data?: T;
-  error?: any;
-  message?: string;
-  statusCode?: number;
-};
+
 export type AppState = {
   page: "login" | "editor";
   password: string;
@@ -29,8 +24,8 @@ export function useAppContext() {
 export function AppProvider(props: React.PropsWithChildren) {
   const [state, setState] = useImmer<UpdateType>({
     page: "login",
-    username:'',
-    password:''
+    username: "",
+    password: "",
   });
   const moveTo = useCallback(
     (name: AppState["page"]) => {

@@ -1,14 +1,11 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AppProvider, useAppContext } from "./utils";
+import { AppProvider, useAppContext } from "./AppContext";
 import { getFile, updateFile, verifyLogin } from "./api-utils";
 import { useImmer } from "use-immer";
 
 export default function Main() {
-  useEffect(() => {
-    console.log(process.env);
-  }, []);
   return (
     <AppProvider>
       <Home />
