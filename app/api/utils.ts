@@ -1,26 +1,23 @@
 import { makeResult, Result } from "../utils";
 export type Env = {
-  GITHUB_TOKEN_ABHISHEK: string;
-  GITHUB_TOKEN_NITESH: string;
+  GITHUB_TOKEN: string;
   SECRET_KEY_ABHISHEK: string;
   SECRET_KEY_NITESH: string;
   GIST_ID_NITESH: string;
   GIST_ID_ABHISHEK: string;
 };
 export function getEnv() {
-  const env = {
-    GITHUB_TOKEN_ABHISHEK: process.env.GITHUB_TOKEN_ABHISHEK,
-    GITHUB_TOKEN_NITESH: process.env.GITHUB_TOKEN_NITESH,
-    SECRET_KEY_ABHISHEK: process.env.SECRET_KEY_ABHISHEK,
-    SECRET_KEY_NITESH: process.env.SECRET_KEY_NITESH,
-    GIST_ID_NITESH: process.env.GIST_ID_NITESH,
-    GIST_ID_ABHISHEK: process.env.GIST_ID_ABHISHEK,
-  } as Env;
+  const env: Env = {
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN!,
+    SECRET_KEY_ABHISHEK: process.env.SECRET_KEY_ABHISHEK!,
+    SECRET_KEY_NITESH: process.env.SECRET_KEY_NITESH!,
+    GIST_ID_NITESH: process.env.GIST_ID_NITESH!,
+    GIST_ID_ABHISHEK: process.env.GIST_ID_ABHISHEK!,
+  };
 
   //if any invalid return undefined
   if (
-    !env.GITHUB_TOKEN_ABHISHEK ||
-    !env.GITHUB_TOKEN_NITESH ||
+    !env.GITHUB_TOKEN ||
     !env.SECRET_KEY_ABHISHEK ||
     !env.SECRET_KEY_NITESH ||
     !env.GIST_ID_NITESH ||

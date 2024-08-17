@@ -13,7 +13,7 @@ export function GET(request: Request) {
     }
     if (username === "abhishek" && password === env.SECRET_KEY_ABHISHEK) {
       const result = await readGistFile(
-        env.GITHUB_TOKEN_ABHISHEK,
+        env.GITHUB_TOKEN,
         env.GIST_ID_ABHISHEK,
         "a.e",
       );
@@ -21,7 +21,7 @@ export function GET(request: Request) {
     }
     if (username === "nitesh" && password === env.SECRET_KEY_NITESH) {
       const result = await readGistFile(
-        env.GITHUB_TOKEN_ABHISHEK,
+        env.GITHUB_TOKEN,
         env.GIST_ID_NITESH,
         "n.e",
       );
@@ -39,16 +39,16 @@ export function PATCH(request: Request) {
   return handleRoute(request, async ({ body, env }) => {
     const { username, password,data } = body;
     console.log({ username, password,data });
-    if (!username || !password) {
+    if (!username || !password || !data) {
       return makeResponse({
         statusCode: 400,
-        message: "Invalid username and password",
+        message: "Invalid username or password or data",
       });
     }
 
     if (username === "abhishek" && password === env.SECRET_KEY_ABHISHEK) {
       const result = await updateGistFile(
-        env.GITHUB_TOKEN_ABHISHEK,
+        env.GITHUB_TOKEN,
         env.GIST_ID_ABHISHEK,
         "a.e",
         data
