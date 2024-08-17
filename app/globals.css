@@ -8,7 +8,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+input {
+    font-size: large;
+}
 * {
     box-sizing: border-box;
     padding: 0;
