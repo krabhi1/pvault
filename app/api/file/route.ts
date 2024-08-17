@@ -55,7 +55,13 @@ export function PATCH(request: Request) {
       return makeResponse(result);
     }
     if (username === "nitesh" && password === env.SECRET_KEY_NITESH) {
-      return makeResponse({ data: true });
+      const result = await updateGistFile(
+        env.GITHUB_TOKEN,
+        env.GIST_ID_NITESH,
+        "n.e",
+        data
+      );
+      return makeResponse(result);
     }
     return makeResponse({
       statusCode: 401,
