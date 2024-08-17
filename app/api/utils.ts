@@ -31,7 +31,7 @@ export function getEnv() {
 export function makeResponse(result: Result<any>) {
   return new Response(JSON.stringify(result), {
     headers: {
-      "content-type": "application/json",
+      "Content-Type": "application/json",
     },
     status: result.statusCode || 200,
   });
@@ -66,7 +66,6 @@ export async function handleRoute(
   }
   const urlParams = new URL(request.url).searchParams;
   const params = Object.fromEntries(urlParams.entries());
-  console.log("params", params);
 
   return callback({
     native: request,
@@ -90,9 +89,11 @@ export async function jsonFetch<T = any>({
 }) {
   const result: Result<T> = {};
   try {
+    const jsonHeaders =
+      typeof body === "object" ? { "Content-Type": "application/json" } : {};
     const response = await fetch(url, {
       method,
-      headers: headers || { "Content-Type": "application/json" },
+      headers: headers || jsonHeaders,
       body: body ? JSON.stringify(body) : undefined,
       cache: "no-cache",
     });
@@ -116,42 +117,11 @@ export async function jsonFetch<T = any>({
   return result;
 }
 
-// async function updateGist(gistId, token) {
-//   const url = `https://api.github.com/gists/${gistId}`;
-//   const bodyData = {
-//     description: "An updated gist description",
-//     files: {
-//       "README.md": {
-//         content: "Hello World from GitHub"
-//       }
-//     }
-//   };
-
-//   const response = await fetch(url, {
-//     method: "PATCH",
-//     headers: {
-//       "Accept": "application/vnd.github+json",
-//       "Authorization": `Bearer ${token}`,
-//       "X-GitHub-Api-Version": "2022-11-28",
-//       "Content-Type": "application/json"
-//     },
-//     body: JSON.stringify(bodyData)
-//   });
-
-//   if (response.ok) {
-//     const data = await response.json();
-//     console.log("Gist updated successfully:", data);
-//   } else {
-//     console.error("Error updating gist:", response.status, response.statusText);
-//   }
-// }
-
 export async function readGistFile(
   githubToken: string,
   gistId: string,
   fileName: string,
 ) {
-  console.log(githubToken, gistId, fileName);
   const output = makeResult<string>({});
   const result = await jsonFetch({
     method: "GET",
@@ -165,7 +135,6 @@ export async function readGistFile(
   output.statusCode = result.statusCode;
   if (result.statusCode == 200 && result.data) {
     const raw_url = result.data.files[fileName].raw_url;
-    console.log(raw_url);
     const text = await downloadFile(raw_url);
     if (text) {
       output.data = text;

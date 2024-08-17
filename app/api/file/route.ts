@@ -38,7 +38,6 @@ export function GET(request: Request) {
 export function PATCH(request: Request) {
   return handleRoute(request, async ({ body, env }) => {
     const { username, password,data } = body;
-    console.log({ username, password,data });
     if (!username || !password || !data) {
       return makeResponse({
         statusCode: 400,

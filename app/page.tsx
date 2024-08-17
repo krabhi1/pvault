@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AppProvider, useAppContext } from "./AppContext";
 import { getFile, updateFile, verifyLogin } from "./api-utils";
 import { useImmer } from "use-immer";
+import { decode, encode } from "./crypt";
 
 export default function Main() {
   return (
@@ -64,19 +65,24 @@ function Editor() {
   const { update, username, password } = useAppContext();
   const [text, setText] = useImmer({ old: "", new: "" });
 
+  const [loading, setLoading] = useState(true);
+
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
     load();
   }, []);
 
   async function load() {
     const res = await getFile(username!, password!);
-    console.log(res);
     if (res.data) {
+      const decrypted = await decode(res.data, password);
       setText((d) => {
         if (res.data) {
-          d.old = res.data;
-          d.new = res.data;
+          d.old = decrypted;
+          d.new = decrypted;
         }
+        setLoading(false);
       });
     } else {
       alert(res.message);
@@ -85,26 +91,35 @@ function Editor() {
 
   async function handleUpdate() {
     if (text.old !== text.new) {
-      const res = await updateFile(username!, password!, text.new);
+      setIsSaving(true);
+      const encrypted = await encode(text.new, password);
+      const res = await updateFile(username!, password!, encrypted);
+      setIsSaving(false);
       if (res.data) {
-        alert("File updated successfully");
         setText((d) => {
           d.old = d.new;
         });
+        alert("File updated successfully");
       } else {
         alert(res.message);
       }
     }
   }
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="editor">
+      {isSaving && <div className="saving">Saving...</div>}
       <div className="edit">
         <label>edit</label>
         <input type="checkbox" onChange={(e) => setCanEdit(e.target.checked)} />
       </div>
       <textarea
-        readOnly={!canEdit}
+        value={text.new}
+        readOnly={!canEdit || isSaving}
         onChange={(e) =>
           setText((d) => {
             d.new = e.target.value;
