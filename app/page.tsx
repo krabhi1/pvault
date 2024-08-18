@@ -25,6 +25,11 @@ function Home() {
 function Login() {
   const { password, update, username } = useAppContext();
   const [showPassword, setShowPassword] = useState(false);
+  useEffect(() => {
+    update((d) => {
+      d.username = "nitesh";
+    });
+  }, []);
 
   async function handleLogin() {
     if (password && username && password.length > 0 && username.length > 0) {
@@ -42,11 +47,20 @@ function Login() {
     <div className="login-wrapper">
       <div className="login">
         <label>Username</label>
+        {/*
         <input
           type="text"
           value={username}
           onChange={(e) => update((d) => (d.username = e.target.value.trim()))}
         />
+        */}
+        <select
+          value={username}
+          onChange={(e) => update((d) => (d.username = e.target.value.trim()))}
+        >
+          <option value="nitesh">Nitesh</option>
+          <option value="abhishek">Abhishek</option>
+        </select>
         <label>Password</label>
         <input
           type="password"
@@ -58,14 +72,16 @@ function Login() {
             Login
           </button>
         </span>
-        <span>
-          <button
-            className="link"
-            onClick={() => update((d) => (d.page = "change-password"))}
-          >
-            Change Password
-          </button>
-        </span>
+        {/*
+          <span>
+            <button
+              className="link"
+              onClick={() => update((d) => (d.page = "change-password"))}
+            >
+              Change Password
+            </button>
+          </span>
+          */}
       </div>
     </div>
   );
