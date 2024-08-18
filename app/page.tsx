@@ -99,7 +99,7 @@ function Editor() {
         setText((d) => {
           d.old = d.new;
         });
-        alert("File updated successfully");
+        // alert("File updated successfully");
       } else {
         alert(res.message);
       }
@@ -113,9 +113,16 @@ function Editor() {
   return (
     <div className="editor">
       {isSaving && <div className="saving">Saving...</div>}
-      <div className="edit">
-        <label>edit</label>
-        <input type="checkbox" onChange={(e) => setCanEdit(e.target.checked)} />
+      <div className="header">
+        <span className="edit">
+          <label>edit</label>
+          <input
+            type="checkbox"
+            onChange={(e) => setCanEdit(e.target.checked)}
+          />
+        </span>
+        <span className="space"></span>
+        {canEdit && <button onClick={handleUpdate}>Update</button>}
       </div>
       <textarea
         value={text.new}
@@ -126,11 +133,6 @@ function Editor() {
           })
         }
       ></textarea>
-      {canEdit && (
-        <div>
-          <button onClick={handleUpdate}>Update</button>
-        </div>
-      )}
     </div>
   );
 }
