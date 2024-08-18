@@ -23,6 +23,7 @@ function Home() {
 
 function Login() {
   const { password, update, username } = useAppContext();
+  const [showPassword,setShowPassword]=useState(false);
 
   async function handleLogin() {
     if (password && username && password.length > 0 && username.length > 0) {
@@ -47,7 +48,7 @@ function Login() {
         />
         <label>Password</label>
         <input
-          type="text"
+          type="password"
           value={password}
           onChange={(e) => update((d) => (d.password = e.target.value.trim()))}
         />
