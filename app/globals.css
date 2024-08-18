@@ -34,13 +34,23 @@ html {
     gap: 6px;
     margin-top: 20px;
 }
-.login > input {
+input {
     padding: 6px;
     border: 1px solid #ccc;
     outline: none;
 }
-.login button {
+button.small {
+    padding: 4px;
+}
+button.med {
     padding: 6px;
+}
+button.link {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .editor {
@@ -59,14 +69,13 @@ html {
 }
 .editor .header button {
     height: 100%;
-    padding: 4px;
 }
-.editor .header .edit{
+.editor .header .edit {
     display: flex;
     align-items: center;
-    gap:4px
+    gap: 4px;
 }
-.editor .header .space{
+.editor .header .space {
     flex: 1;
 }
 .editor .header label {
@@ -83,15 +92,24 @@ html {
     border: 1px solid #ccc;
 }
 
-.editor .saving {
+.saving {
     z-index: 100;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(255,255,255,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.change-pass {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 300px;
+    margin: 0 auto;
+    margin-top: 20px;
 }

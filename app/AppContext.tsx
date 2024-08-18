@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useState } from "react";
 import { Updater, useImmer } from "use-immer";
 
 export type AppState = {
-  page: "login" | "editor";
+  page: "login" | "editor"|"change-password";
   password: string;
   username: string;
   moveTo: (page: AppState["page"]) => void;

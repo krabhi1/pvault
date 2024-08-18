@@ -18,12 +18,13 @@ function Home() {
   const { page } = useAppContext();
   if (page == "login") return <Login />;
   if (page == "editor") return <Editor />;
+  if (page == "change-password") return <ChangePassword />;
   return "Unknown page";
 }
 
 function Login() {
   const { password, update, username } = useAppContext();
-  const [showPassword,setShowPassword]=useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin() {
     if (password && username && password.length > 0 && username.length > 0) {
@@ -53,7 +54,17 @@ function Login() {
           onChange={(e) => update((d) => (d.password = e.target.value.trim()))}
         />
         <span>
-          <button onClick={handleLogin}>Login</button>
+          <button className="med" onClick={handleLogin}>
+            Login
+          </button>
+        </span>
+        <span>
+          <button
+            className="link"
+            onClick={() => update((d) => (d.page = "change-password"))}
+          >
+            Change Password
+          </button>
         </span>
       </div>
     </div>
@@ -123,7 +134,23 @@ function Editor() {
           />
         </span>
         <span className="space"></span>
-        {canEdit && <button onClick={handleUpdate}>Update</button>}
+        <button
+          className="med"
+          onClick={() => {
+            update((d) => {
+              d.page = "login";
+              d.username = "";
+              d.password = "";
+            });
+          }}
+        >
+          logout
+        </button>
+        {canEdit && (
+          <button className="med" onClick={handleUpdate}>
+            Update
+          </button>
+        )}
       </div>
       <textarea
         value={text.new}
@@ -134,6 +161,97 @@ function Editor() {
           })
         }
       ></textarea>
+    </div>
+  );
+}
+
+function ChangePassword() {
+  const [updating, setUpdating] = useState(false);
+  const { update } = useAppContext();
+  //input state
+  const [username, setUsername] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  async function handleChange() {
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+    setUpdating(true);
+    const verifyResult = await verifyLogin(username, oldPassword);
+    if (verifyResult.data == undefined) {
+      alert(verifyResult.message);
+      setUpdating(false);
+      return;
+    }
+    const encText = await getFile(username, oldPassword);
+    if (encText.data == undefined) {
+      alert(encText.message);
+      setUpdating(false);
+      return;
+    }
+    const decText = await decode(encText.data, oldPassword);
+    const encNewText = await encode(decText, newPassword);
+    const res = await updateFile(username, oldPassword, encNewText);
+    if (res.data == undefined) {
+      alert(res.message);
+      setUpdating(false);
+      return;
+    }
+    setUpdating(false);
+    update((d) => {
+      d.page = "editor";
+      d.username = username;
+      d.password = newPassword;
+    });
+  }
+  return (
+    <div className="change-pass">
+      {updating && (
+        <div className="saving">
+          <span>Updating...</span>
+        </div>
+      )}
+      <label>Username</label>
+      <input
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <label>Old Password</label>
+      <input
+        type="password"
+        value={oldPassword}
+        onChange={(e) => setOldPassword(e.target.value)}
+      />
+      <label>New Password</label>
+      <input
+        type="password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+      />
+      <label>Confirm Password</label>
+      <input
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+      <button onClick={handleChange} className="med">
+        Change Password
+      </button>
+      <button
+        className="link"
+        onClick={() => update((d) => (d.page = "login"))}
+      >
+        back to login
+      </button>
     </div>
   );
 }
