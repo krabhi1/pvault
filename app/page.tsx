@@ -5,11 +5,13 @@ import { AppProvider, useAppContext } from "./AppContext";
 import { getFile, updateFile, verifyLogin } from "./api-utils";
 import { useImmer } from "use-immer";
 import { decode, encode } from "./crypt";
+import { LoadingBox } from "./components/Loading";
 
 export default function Main() {
   return (
     <AppProvider>
       <Home />
+      <LoadingBox />
     </AppProvider>
   );
 }
@@ -33,7 +35,9 @@ function Login() {
 
   async function handleLogin() {
     if (password && username && password.length > 0 && username.length > 0) {
+      update((d) => (d.isLoading = true));
       const verifyResult = await verifyLogin(username, password);
+      update((d) => (d.isLoading = false));
       if (verifyResult.data) {
         update((d) => (d.page = "editor"));
       } else {
@@ -101,6 +105,14 @@ function Editor() {
     load();
   }, []);
 
+  useEffect(() => {
+    if (loading) {
+      update((d) => (d.isLoading = true));
+    } else {
+      update((d) => (d.isLoading = false));
+    }
+  }, [loading, update]);
+
   async function load() {
     const res = await getFile(username!, password!);
     if (res.data) {
@@ -135,7 +147,7 @@ function Editor() {
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (

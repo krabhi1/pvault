@@ -5,6 +5,7 @@ export type AppState = {
   page: "login" | "editor"|"change-password";
   password: string;
   username: string;
+  isLoading: boolean;
   moveTo: (page: AppState["page"]) => void;
   update: (callback: UpdateCallback) => void;
 };
@@ -26,6 +27,7 @@ export function AppProvider(props: React.PropsWithChildren) {
     page: "login",
     username: "",
     password: "",
+    isLoading:false
   });
   const moveTo = useCallback(
     (name: AppState["page"]) => {

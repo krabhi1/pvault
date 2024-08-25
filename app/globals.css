@@ -113,3 +113,24 @@ button.link {
     margin: 0 auto;
     margin-top: 20px;
 }
+
+.loading-box{
+    position: fixed;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+.loading-box .loading {
+    animation: spin 1s linear infinite;
+    width: 46px;
+    height: 46px;
+}
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
