@@ -1,118 +1,139 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { AppProvider, useAppContext } from "./AppContext";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getFile, updateFile, verifyLogin } from "./api-utils";
 import { useImmer } from "use-immer";
 import { decode, encode } from "./crypt";
 import { LoadingBox } from "./components/Loading";
+import Header from "./components/Header";
+import "@/app/styles/editor.css";
+import { CredentialGroup } from "./store/appStore";
+import CredentialGroupView from "./components/CredentialGroup";
+// import CredentialCard, { CredentialGroup } from "./components/CredentialCard";
+
+import { useCredentialStore } from "./store/appStore";
+import CredentialChild from "./components/CredentialChild";
+import toast, { Toaster } from "react-hot-toast";
+import {
+  CredentialRawGroupData,
+  toExportableJson,
+  toImportableJson,
+} from "./utils";
 
 export default function Main() {
   return (
-    <AppProvider>
+    <>
       <Home />
-      <LoadingBox />
-    </AppProvider>
+      <Toaster />
+    </>
   );
 }
 
 function Home() {
-  const { page } = useAppContext();
-  if (page == "login") return <Login />;
-  if (page == "editor") return <Editor />;
-  if (page == "change-password") return <ChangePassword />;
+  const page = useCredentialStore((s) => s.page);
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("nitesh");
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (page == "login")
+    return (
+      <>
+        <Login
+          password={password}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          setPassword={setPassword}
+          username={username}
+          setUsername={setUsername}
+        />
+        <LoadingBox isLoading={isLoading} />
+      </>
+    );
+  if (page == "editor")
+    return (
+      <>
+        <Editor
+          password={password}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          username={username}
+          setPassword={setPassword}
+        />
+        <LoadingBox isLoading={isLoading} />
+      </>
+    );
   return "Unknown page";
 }
 
-function Login() {
-  const { password, update, username } = useAppContext();
-  const [showPassword, setShowPassword] = useState(false);
-  useEffect(() => {
-    update((d) => {
-      d.username = "nitesh";
-    });
-  }, []);
-
+function Login({
+  password,
+  username,
+  isLoading,
+  setIsLoading,
+  setPassword,
+  setUsername,
+}: {
+  password: string;
+  username: string;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  setPassword: Dispatch<SetStateAction<string>>;
+  setUsername: Dispatch<SetStateAction<string>>;
+}) {
+  const changePage = useCredentialStore((s) => s.changePage);
   async function handleLogin() {
     if (password && username && password.length > 0 && username.length > 0) {
-      update((d) => (d.isLoading = true));
+      setIsLoading(true);
       const verifyResult = await verifyLogin(username, password);
-      update((d) => (d.isLoading = false));
+      setIsLoading(false);
+
+      console.log(verifyResult);
       if (verifyResult.data) {
-        update((d) => (d.page = "editor"));
+        changePage("editor");
       } else {
-        alert(verifyResult.message);
+        toast.error(verifyResult.message!!, { position: "bottom-center" });
       }
     } else {
-      alert("Please enter username and password");
+      toast.error("Please enter username and password", {
+        position: "bottom-center",
+      });
     }
   }
   return (
     <div className="login-wrapper">
-      <div className="login">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
+        }}
+        className="login"
+        autoComplete="off"
+        autoSave="off"
+      >
         <label>Username</label>
-        {/*
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => update((d) => (d.username = e.target.value.trim()))}
-        />
-        */}
-        <select
-          value={username}
-          onChange={(e) => update((d) => (d.username = e.target.value.trim()))}
-        >
+        <select value={username} onChange={(e) => setUsername(e.target.value)}>
           <option value="nitesh">Nitesh</option>
           <option value="abhishek">Abhishek</option>
         </select>
         <label>Password</label>
+
         <input
           type="password"
           value={password}
-          onChange={(e) => update((d) => (d.password = e.target.value.trim()))}
+          placeholder="Key"
+          onChange={(e) => setPassword(e.target.value)}
         />
         <span>
-          <button className="med" onClick={handleLogin}>
+          <button type="submit" className="primary">
             Login
           </button>
         </span>
-        {/*
-          <span>
-            <button
-              className="link"
-              onClick={() => update((d) => (d.page = "change-password"))}
-            >
-              Change Password
-            </button>
-          </span>
-          */}
-      </div>
+      </form>
     </div>
   );
 }
 
-function Editor() {
-  const [canEdit, setCanEdit] = useState(false);
-
-  const { update, username, password } = useAppContext();
-  const [text, setText] = useImmer({ old: "", new: "" });
-
-  const [loading, setLoading] = useState(true);
-
-  const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  useEffect(() => {
-    if (loading) {
-      update((d) => (d.isLoading = true));
-    } else {
-      update((d) => (d.isLoading = false));
-    }
-  }, [loading, update]);
-
+/*
   async function load() {
     const res = await getFile(username!, password!);
     if (res.data) {
@@ -145,141 +166,124 @@ function Editor() {
       }
     }
   }
+*/
 
-  if (loading) {
-    return null;
+function Editor({
+  password,
+  username,
+  isLoading,
+  setIsLoading,
+  setPassword,
+}: {
+  password: string;
+  username: string;
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  setPassword: Dispatch<SetStateAction<string>>;
+}) {
+  const credentials = useCredentialStore((s) => s.credentials);
+  const onAddGroup = useCredentialStore((s) => s.addGroup);
+  const onToggleGroup = useCredentialStore((s) => s.toggleGroup);
+  const onAddCredential = useCredentialStore((s) => s.addCredential);
+  const onGroupRename = useCredentialStore((s) => s.renameGroup);
+  const onDeleteGroup = useCredentialStore((s) => s.deleteGroup);
+  const deleteCredential = useCredentialStore((s) => s.deleteCredential);
+  const updateCredential = useCredentialStore((s) => s.updateCredential);
+  const setData = useCredentialStore((s) => s.setData);
+  const updateCount = useCredentialStore((s) => s.updateTimes);
+  const logout = useCredentialStore((s) => s.logout);
+  const reset = useCredentialStore((s) => s.reset);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  async function loadData() {
+    setIsLoading(true);
+    try {
+      const res = await getFile(username!, password!);
+      if (res.data) {
+        const decrypted = await decode(res.data, password);
+        const obj = JSON.parse(decrypted) as CredentialRawGroupData[];
+        const data = toImportableJson(obj);
+        setData(data);
+      } else {
+        throw new Error(res.message);
+      }
+      setIsLoading(false);
+    } catch (error: any) {
+      toast.error(error.message, { position: "bottom-center" });
+    }
+  }
+
+  async function onSave() {
+    if (updateCount === 0) {
+      toast.error("No changes to save", { position: "bottom-center" });
+      return;
+    }
+    setIsLoading(true);
+    const text = JSON.stringify(toExportableJson(credentials));
+    const encrypted = await encode(text, password);
+    const res = await updateFile(username, password, encrypted);
+    setIsLoading(false);
+    if (res.data) {
+      toast.success("File updated successfully", { position: "bottom-center" });
+      reset();
+    } else {
+      toast.error(res.message!, { position: "bottom-center" });
+    }
+  }
+
+  function onLogout() {
+    if (updateCount) {
+      const isOk = confirm(
+        "Your changes are not saved. Do you want to logout?"
+      );
+      if (!isOk) return;
+    }
+
+    logout();
+    setPassword("");
   }
 
   return (
-    <div className="editor">
-      {isSaving && <div className="saving">Saving...</div>}
-      <div className="header">
-        <span className="edit">
-          <label>edit</label>
-          <input
-            type="checkbox"
-            onChange={(e) => setCanEdit(e.target.checked)}
+    <div>
+      {
+        <section className="editor-page">
+          <Header
+            onLogout={onLogout}
+            onSave={onSave}
+            updateCount={updateCount}
           />
-        </span>
-        <span className="space"></span>
-        <button
-          className="med"
-          onClick={() => {
-            update((d) => {
-              d.page = "login";
-              d.username = "";
-              d.password = "";
-            });
-          }}
-        >
-          logout
-        </button>
-        {canEdit && (
-          <button className="med" onClick={handleUpdate}>
-            Update
-          </button>
-        )}
-      </div>
-      <textarea
-        value={text.new}
-        readOnly={!canEdit || isSaving}
-        onChange={(e) =>
-          setText((d) => {
-            d.new = e.target.value;
-          })
-        }
-      ></textarea>
-    </div>
-  );
-}
 
-function ChangePassword() {
-  const [updating, setUpdating] = useState(false);
-  const { update } = useAppContext();
-  //input state
-  const [username, setUsername] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+          <div className="editor">
+            <h2>Credentials ({credentials.length})</h2>
+            <div className="credential-holder">
+              {credentials.map((c, index) => (
+                <CredentialGroupView
+                  credential={c}
+                  key={index}
+                  onToggleGroup={onToggleGroup}
+                  onAddCredential={onAddCredential}
+                  onGroupDelete={onDeleteGroup}
+                  onGroupRename={onGroupRename}
+                >
+                  {c.children.map((child, index2) => (
+                    <CredentialChild
+                      key={index2}
+                      credential={child}
+                      deleteCredential={deleteCredential}
+                      updateCredential={updateCredential}
+                    />
+                  ))}
+                </CredentialGroupView>
+              ))}
 
-  async function handleChange() {
-    if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match");
-      return;
-    }
-    if (newPassword.length < 6) {
-      alert("Password must be at least 6 characters");
-      return;
-    }
-    setUpdating(true);
-    const verifyResult = await verifyLogin(username, oldPassword);
-    if (verifyResult.data == undefined) {
-      alert(verifyResult.message);
-      setUpdating(false);
-      return;
-    }
-    const encText = await getFile(username, oldPassword);
-    if (encText.data == undefined) {
-      alert(encText.message);
-      setUpdating(false);
-      return;
-    }
-    const decText = await decode(encText.data, oldPassword);
-    const encNewText = await encode(decText, newPassword);
-    const res = await updateFile(username, oldPassword, encNewText);
-    if (res.data == undefined) {
-      alert(res.message);
-      setUpdating(false);
-      return;
-    }
-    setUpdating(false);
-    update((d) => {
-      d.page = "editor";
-      d.username = username;
-      d.password = newPassword;
-    });
-  }
-  return (
-    <div className="change-pass">
-      {updating && (
-        <div className="saving">
-          <span>Updating...</span>
-        </div>
-      )}
-      <label>Username</label>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <label>Old Password</label>
-      <input
-        type="password"
-        value={oldPassword}
-        onChange={(e) => setOldPassword(e.target.value)}
-      />
-      <label>New Password</label>
-      <input
-        type="password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-      />
-      <label>Confirm Password</label>
-      <input
-        type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-      />
-
-      <button onClick={handleChange} className="med">
-        Change Password
-      </button>
-      <button
-        className="link"
-        onClick={() => update((d) => (d.page = "login"))}
-      >
-        back to login
-      </button>
+              <CredentialGroupView onAddGroup={onAddGroup} />
+            </div>
+          </div>
+        </section>
+      }
     </div>
   );
 }
