@@ -1,6 +1,6 @@
 # pvault
 
-This project provides a secure way to store private data by encrypting it before saving it to GitHub Gist. By encrypting the data, it ensures confidentiality and protection from unauthorized access, even if someone gains access to the Gist.
+This project provides a secure way to store private data by encrypting it before saving it to public places like GitHub Gist. By encrypting the data, it ensures confidentiality and protection from unauthorized access, even if someone gains access to the Gist.
 
 ### Features
 
