@@ -1,13 +1,10 @@
 "use client";
-import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getFile, updateFile, verifyLogin } from "./api-utils";
-import { useImmer } from "use-immer";
 import { decode, encode } from "./crypt";
 import { LoadingBox } from "./components/Loading";
 import Header from "./components/Header";
 import "@/app/styles/editor.css";
-import { CredentialGroup } from "./store/appStore";
 import CredentialGroupView from "./components/CredentialGroup";
 // import CredentialCard, { CredentialGroup } from "./components/CredentialCard";
 
@@ -15,14 +12,16 @@ import { useCredentialStore } from "./store/appStore";
 import CredentialChild from "./components/CredentialChild";
 import toast, { Toaster } from "react-hot-toast";
 import {
-  CredentialRawGroupData,
-  toExportableJson,
-  toImportableJson,
+    CredentialRawGroupData,
+    toExportableJson,
+    toImportableJson,
 } from "./utils";
+import DevStamp from "./components/Dev";
 
 export default function Main() {
   return (
     <>
+      <DevStamp />
       <Home />
       <Toaster />
     </>
@@ -237,7 +236,7 @@ function Editor({
   function onLogout() {
     if (updateCount) {
       const isOk = confirm(
-        "Your changes are not saved. Do you want to logout?"
+        "Your changes are not saved. Do you want to logout?",
       );
       if (!isOk) return;
     }
