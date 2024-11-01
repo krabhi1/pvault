@@ -25,6 +25,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const formSchema = z.object({
   username: z.string().min(3).max(50),
@@ -39,6 +40,7 @@ export default function () {
       password: "",
     },
   });
+  const isLoading = false;
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -61,7 +63,8 @@ export default function () {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="username" {...field} />
+
+                      <Input disabled={isLoading} placeholder="username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -75,6 +78,7 @@ export default function () {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
+                      disabled={isLoading}
                         type="password"
                         placeholder="password"
                         {...field}
@@ -84,7 +88,12 @@ export default function () {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Sign In</Button>
+              <Button disabled={isLoading} type="submit">
+                {isLoading && (
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Update
+              </Button>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
                 <Link href="signup" className="underline">
