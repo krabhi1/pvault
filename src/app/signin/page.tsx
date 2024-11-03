@@ -46,6 +46,8 @@ export default function () {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    console.log(values);
+    console.log(values);
   }
   return (
     <div className="flex h-screen w-full items-center justify-center px-4">

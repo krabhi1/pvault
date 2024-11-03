@@ -1,0 +1,10 @@
+upload:
+  - create updates list:
+      - exclude:
+          - if new and deleted
+          - if name start with _
+  - upload updates:
+      - update the store state:
+          - remove deleted items
+          - isNew to false
+          - original == current

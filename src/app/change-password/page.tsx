@@ -28,7 +28,11 @@ import { z } from "zod";
 import { Console } from "console";
 import { useEffect } from "react";
 import { LoadSpin } from "../../../temp/app/components/Loading";
-import { ReloadIcon, RocketIcon ,CheckCircledIcon} from "@radix-ui/react-icons";
+import {
+  ReloadIcon,
+  RocketIcon,
+  CheckCircledIcon,
+} from "@radix-ui/react-icons";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z.object({
@@ -120,14 +124,13 @@ export default function () {
 function Success() {
   return (
     <div className="mx-auto min-w-96 max-w-xs p-1">
-      <Alert >
+      <Alert>
         <CheckCircledIcon className="h- w-4  stroke-green-500" />
-        <AlertTitle >Successfully!</AlertTitle>
+        <AlertTitle>Successfully!</AlertTitle>
         <AlertDescription>
           Your password has been changed successfully.
         </AlertDescription>
       </Alert>
-
     </div>
   );
 }
