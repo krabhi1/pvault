@@ -65,8 +65,11 @@ export default function () {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-
-                      <Input disabled={isLoading} placeholder="username" {...field} />
+                      <Input
+                        disabled={isLoading}
+                        placeholder="username"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -80,7 +83,7 @@ export default function () {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                      disabled={isLoading}
+                        disabled={isLoading}
                         type="password"
                         placeholder="password"
                         {...field}
@@ -94,11 +97,11 @@ export default function () {
                 {isLoading && (
                   <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Update
+                Sign In
               </Button>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link href="signup" className="underline">
+                <Link href="/signup" className="underline">
                   Sign up
                 </Link>
               </div>

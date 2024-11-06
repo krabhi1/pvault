@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 export type Collection = {
   id: string;
   name: string;
-  items: Item[];
+  items: CItem[];
   //local
   _isExpanded: boolean;
   //detect changes
@@ -15,7 +15,7 @@ export type Collection = {
   _isNew: boolean;
 };
 
-export type Item = {
+export type CItem = {
   id: string;
   key: string;
   value: string;
@@ -43,7 +43,7 @@ type Actions = {
   updateItem: (
     collectionId: string,
     id: string,
-    item: Partial<Pick<Item, "key" | "value">>,
+    item: Partial<Pick<CItem, "key" | "value">>,
   ) => void;
 };
 
@@ -127,6 +127,20 @@ export const useAppStore = create<State & Actions>()(
     },
   })),
 );
+
+function genDemoData() {
+  //gen 5 demo collections
+  for (let i = 0; i < 5; i++) {
+    useAppStore.getState().addCollection(`Collection ${i}`);
+  }
+  //gen 5 demo items for each collection
+  useAppStore.getState().collections.forEach((c) => {
+    for (let i = 0; i < 5; i++) {
+      useAppStore.getState().addItem(c.id, `key ${i}`, `value ${i}`);
+    }
+  });
+}
+genDemoData();
 
 // export const useCollection = (id: string) => {
 //   const { collection } = useAppStore(

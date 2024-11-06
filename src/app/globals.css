@@ -59,10 +59,6 @@
     }
 }
 
-.a {
-    background-color: #48484b;
-}
-
 .edit-text:empty:before {
     content: attr(data-placeholder);
     color: #9ca3af;

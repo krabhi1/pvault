@@ -1,5 +1,5 @@
 "use client";
-import { Collection, Item, useAppStore } from "@/app/store/app-store";
+import { Collection, CItem, useAppStore } from "@/app/store/app-store";
 import { Button } from "@/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -12,9 +12,10 @@ import {
 import { TrashIcon } from "@radix-ui/react-icons";
 import { AccordionHeader } from "@radix-ui/react-accordion";
 import { useCallback, useEffect, useRef, useState, MouseEvent } from "react";
+import { Input } from "@/components/ui/input";
 
 type EditableTextProps = {
-  initial: string;
+  value: string;
   onChange?: (value: string) => void;
   isMultiline?: boolean;
   isSecret?: boolean;
@@ -35,7 +36,7 @@ function EditableText(props: EditableTextProps) {
       setIsEditing(false);
     }
   }, []);
-  const initialRef = useRef(props.initial);
+  const initialRef = useRef(props.value);
 
   useEffect(() => {
     if (isEditing) {
@@ -69,6 +70,16 @@ function EditableText(props: EditableTextProps) {
       </span>
     </span>
   );
+}
+
+function EditableText2({
+  value,
+  onChange,
+  isMultiline,
+  isSecret,
+  placeholder,
+}: EditableTextProps) {
+  return <Input value={value} onChange={(e) => onChange?.(e.target.value)} />;
 }
 
 export default function () {
@@ -111,7 +122,7 @@ function CollectionView({ collection }: { collection: Collection }) {
     <AccordionItem value={collection.id}>
       <AccordionHeader className="flex items-center justify-between">
         <EditableText
-          initial={collection.name}
+          value={collection.name}
           onChange={(s) => {
             updateCollection(collection.id, s);
           }}
@@ -142,7 +153,7 @@ function CollectionView({ collection }: { collection: Collection }) {
   );
 }
 
-function ItemView({ item, cid }: { item: Item; cid: string }) {
+function ItemView({ item, cid }: { item: CItem; cid: string }) {
   const {} = useAppStore(
     useShallow((state) => ({
       addItem: state.addItem,
@@ -153,8 +164,8 @@ function ItemView({ item, cid }: { item: Item; cid: string }) {
   return (
     <div className="border flex w-full">
       <div className="flex items-center justify-between w-full">
-        <EditableText initial={item.key} />
-        <EditableText initial={item.value} />
+        <EditableText value={item.key} />
+        <EditableText value={item.value} />
       </div>
       <div className="flex items-center justify-between px-2 gap-1">
         <TrashIcon />
