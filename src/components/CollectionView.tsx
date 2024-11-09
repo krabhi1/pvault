@@ -43,9 +43,11 @@ export default function CollectionView({
         </div>
       </AccordionHeader>
       <AccordionContent className="space-y-2 p-1">
-        {collection.items.map((item) => (
-          <RecordView key={item.id} item={item} />
-        ))}
+        {collection.items
+          .filter((o) => !o._isDeleted)
+          .map((item) => (
+            <RecordView cid={collection.id} key={item.id} item={item} />
+          ))}
       </AccordionContent>
     </AccordionItem>
   );
