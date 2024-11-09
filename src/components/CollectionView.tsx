@@ -7,13 +7,14 @@ import {
 
 import { AccordionHeader } from "@radix-ui/react-accordion";
 //icons
-import { TrashIcon, ChevronDownIcon } from "@radix-ui/react-icons";
+import { TrashIcon, ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { ReactProps } from "./utils";
-import { Collection } from "@/app/store/app-store";
+import { Collection, useAppStore } from "@/app/store/app-store";
 import { cn } from "@/lib/utils";
 import EditText from "./EditText";
 import RecordView from "./RecordView";
 import { Button, buttonVariants } from "./ui/button";
+import { useShallow } from "zustand/react/shallow";
 
 export type CollectionViewProps = ReactProps<{
   collection: Collection;
@@ -22,15 +23,29 @@ export default function CollectionView({
   collection,
   className,
 }: CollectionViewProps) {
+  const { addItem, deleteCollection, updateCollection } = useAppStore(
+    useShallow((s) => ({
+      addItem: s.addItem,
+      deleteCollection: s.deleteCollection,
+      updateCollection: s.updateCollection,
+    }))
+  );
   return (
     <AccordionItem
       className={cn("border-none", className)}
       value={collection.id}
     >
       <AccordionHeader className="flex items-center justify-between space-x-2 ">
-        <EditText value={collection.name} />
+        <EditText
+          onChange={(s) => updateCollection(collection.id, s)}
+          value={collection.name}
+        />
         <div className="flex items-center space-x-1">
-          <Button variant="ghost" className="w-8 h-8 rounded-full ">
+          <Button
+            onClick={() => deleteCollection(collection.id)}
+            variant="ghost"
+            className="w-8 h-8 rounded-full "
+          >
             <TrashIcon color="red" />
           </Button>
           <AccordionTrigger
@@ -48,6 +63,14 @@ export default function CollectionView({
           .map((item) => (
             <RecordView cid={collection.id} key={item.id} item={item} />
           ))}
+        <Button
+          onClick={() => addItem(collection.id, "key", "value")}
+          variant={"outline"}
+          className="w-full"
+        >
+          <PlusIcon />
+          New Item
+        </Button>
       </AccordionContent>
     </AccordionItem>
   );

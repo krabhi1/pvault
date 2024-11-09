@@ -19,9 +19,11 @@ export default function CollectionListView({
       type="multiple"
       className={cn("w-full gap-2 grid grid-cols-1 md:grid-cols-2", className)}
     >
-      {collections.map((collection) => (
-        <CollectionView key={collection.id} collection={collection} />
-      ))}
+      {collections
+        .filter((o) => !o._isDeleted)
+        .map((collection) => (
+          <CollectionView key={collection.id} collection={collection} />
+        ))}
       <Button onClick={() => onAddCollection?.()} variant={"outline"}>
         <PlusIcon />
         New collection
