@@ -29,7 +29,7 @@ export default function ({
   }, [isEditing]);
 
   return (
-    <span className={cn("w-full flex items-center", className)}>
+    <span className={cn("w-full ", className)}>
       <Input
         ref={inputRef}
         placeholder={placeholder}

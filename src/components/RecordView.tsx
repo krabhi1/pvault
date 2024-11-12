@@ -22,7 +22,7 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
   return (
     <div
       className={cn(
-        "flex w-full space-x-2 items-center bg-[#FAF9F8]",
+        "flex w-full p-1 space-x-2 items-center bg-[#FAF9F8]",
         className
       )}
     >

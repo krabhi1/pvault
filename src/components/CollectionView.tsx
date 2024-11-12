@@ -31,7 +31,7 @@ export default function CollectionView({
     }))
   );
   return (
-    <AccordionItem className={cn("", className)} value={collection.id}>
+    <AccordionItem className={cn("rounded", className)} value={collection.id}>
       <AccordionHeader className="flex items-center justify-between space-x-2 ">
         <EditText
           onChange={(s) => updateCollection(collection.id, s)}
@@ -62,7 +62,7 @@ export default function CollectionView({
           ))}
         <Button
           onClick={() => addItem(collection.id, "key", "value")}
-          variant={"outline"}
+          variant={"secondary"}
           className="w-full"
         >
           <PlusIcon />

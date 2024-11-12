@@ -24,12 +24,12 @@ export default function CollectionListView({
         .filter((o) => !o._isDeleted)
         .map((collection) => (
           <CollectionView
-            className="border border-gray-200 p-1"
+            className="border border-gray-200 p-2 "
             key={collection.id}
             collection={collection}
           />
         ))}
-      <Button onClick={() => onAddCollection?.()} variant={"outline"}>
+      <Button onClick={() => onAddCollection?.()} variant={"secondary"}>
         <PlusIcon />
         New collection
       </Button>
