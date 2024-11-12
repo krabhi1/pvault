@@ -8,7 +8,7 @@ import {
 import { AccordionHeader } from "@radix-ui/react-accordion";
 //icons
 import { TrashIcon, ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
-import { ReactProps } from "./utils";
+import { getCollectionStatus, ReactProps, statusToColor } from "./utils";
 import { Collection, useAppStore } from "@/app/store/app-store";
 import { cn } from "@/lib/utils";
 import EditText from "./EditText";
@@ -19,6 +19,7 @@ import { useShallow } from "zustand/react/shallow";
 export type CollectionViewProps = ReactProps<{
   collection: Collection;
 }>;
+
 export default function CollectionView({
   collection,
   className,
@@ -30,14 +31,22 @@ export default function CollectionView({
       updateCollection: s.updateCollection,
     }))
   );
+  const status = getCollectionStatus(collection);
+  const statusColor = statusToColor(status);
+  console.log(collection, status, statusColor);
+
   return (
     <AccordionItem className={cn("rounded", className)} value={collection.id}>
-      <AccordionHeader className="flex items-center justify-between space-x-2 ">
+      <AccordionHeader className="flex items-center justify-between space-x-2  ">
         <EditText
           onChange={(s) => updateCollection(collection.id, s)}
           value={collection.name}
         />
         <div className="flex items-center space-x-1">
+          <span
+            className={`w-2 h-2 rounded-full`}
+            style={{ backgroundColor: statusColor }}
+          ></span>
           <Button
             onClick={() => deleteCollection(collection.id)}
             variant="ghost"

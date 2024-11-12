@@ -5,6 +5,7 @@ import EditText from "./EditText";
 import { cn, copyTextToClipboard } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useShallow } from "zustand/react/shallow";
+import { getItemStatus, statusToColor } from "./utils";
 
 export type RecordViewProps = {
   item: CItem;
@@ -19,6 +20,8 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
     }))
   );
   const { id } = item;
+  const status = getItemStatus(item);
+  const statusColor = statusToColor(status);
   return (
     <div
       className={cn(
@@ -39,7 +42,11 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
           className="flex-1 w-0"
         />
       </div>
-      <div className="flex space-x-1">
+      <div className="flex items-center space-x-1">
+        <span
+          className={`w-2 h-2 rounded-full`}
+          style={{ backgroundColor: statusColor }}
+        ></span>
         <Button
           onClick={() => copyTextToClipboard(item.value)}
           size={"sm"}

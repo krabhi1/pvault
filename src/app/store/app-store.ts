@@ -66,6 +66,7 @@ const utilsActions = (set: (updater: (draft: State & Actions) => any | void) => 
     },
     getUploadData: () => {
       //get all changed data
+      //TODO remove (new and deleted)
       const changedCollections = (JSON.parse(JSON.stringify(get().collections)) as Collection[]).map(c => {
         //TODO remove unwanted property like _isExpanded
         c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
