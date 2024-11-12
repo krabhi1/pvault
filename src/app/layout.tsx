@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import AllProvider from "./AllProvider";
 
 export const metadata: Metadata = {
   title: "pvault",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AllProvider>{children}</AllProvider>
+      </body>
     </html>
   );
 }
