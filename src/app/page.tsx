@@ -14,14 +14,16 @@ export default function () {
     <div className="p-4 ">
       <Header />
       <div className="w-full border-b mt-2"></div>
-      <h1 className="text-2xl text-gray-600 mt-5">
-        Collections({collections.length})
-      </h1>
-      <CollectionListView
-        onAddCollection={() => addCollection("New Collection")}
-        className="mt-2"
-        collections={collections}
-      />
+      <div className="max-w-screen-sm m-auto">
+        <h1 className="text-xl text-gray-600 mt-5">
+          Collections({collections.length})
+        </h1>
+        <CollectionListView
+          onAddCollection={() => addCollection("New Collection")}
+          className="mt-2"
+          collections={collections}
+        />
+      </div>
     </div>
   );
 }

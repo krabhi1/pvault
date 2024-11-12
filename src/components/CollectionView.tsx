@@ -31,10 +31,7 @@ export default function CollectionView({
     }))
   );
   return (
-    <AccordionItem
-      className={cn("border-none", className)}
-      value={collection.id}
-    >
+    <AccordionItem className={cn("", className)} value={collection.id}>
       <AccordionHeader className="flex items-center justify-between space-x-2 ">
         <EditText
           onChange={(s) => updateCollection(collection.id, s)}
