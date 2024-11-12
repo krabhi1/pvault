@@ -23,8 +23,6 @@ export default function ({
 }: EditTextProps) {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const spanRef = useRef<HTMLSpanElement>(null);
-  const [code, setCode] = useState(value);
 
   useEffect(() => {
     if (isEditing) inputRef.current?.focus();
@@ -42,31 +40,34 @@ export default function ({
         readOnly={!isEditing}
         onClick={() => setIsEditing(true)}
         spellCheck={false}
+        onFocus={() => {
+          setIsEditing(true);
+        }}
       />
     </span>
   );
 
-  return (
-    <span className={cn("w-full flex items-center h-9", className)}>
-      {isEditing ? (
-        <Input
-          ref={inputRef}
-          placeholder={placeholder}
-          onChange={(e) => onChange?.(e.target.value)}
-          className={
-            "focus-visible:ring-0 border-none outline-none shadow-none p-0 m-0 text-sm h-auto"
-          }
-          value={value}
-          onBlur={() => setIsEditing(false)}
-        />
-      ) : (
-        <span
-          onClick={() => setIsEditing(true)}
-          className={cn("text-sm  p-0 m-0 w-full text-left ")}
-        >
-          {value}
-        </span>
-      )}
-    </span>
-  );
+  // return (
+  //   <span className={cn("w-full flex items-center h-9", className)}>
+  //     {isEditing ? (
+  //       <Input
+  //         ref={inputRef}
+  //         placeholder={placeholder}
+  //         onChange={(e) => onChange?.(e.target.value)}
+  //         className={
+  //           "focus-visible:ring-0 border-none outline-none shadow-none p-0 m-0 text-sm h-auto"
+  //         }
+  //         value={value}
+  //         onBlur={() => setIsEditing(false)}
+  //       />
+  //     ) : (
+  //       <span
+  //         onClick={() => setIsEditing(true)}
+  //         className={cn("text-sm  p-0 m-0 w-full text-left ")}
+  //       >
+  //         {value}
+  //       </span>
+  //     )}
+  //   </span>
+  // );
 }

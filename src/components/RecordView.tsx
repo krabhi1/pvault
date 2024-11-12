@@ -20,7 +20,12 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
   );
   const { id } = item;
   return (
-    <div className={cn("flex w-full space-x-2 items-center", className)}>
+    <div
+      className={cn(
+        "flex w-full space-x-2 items-center bg-[#FAF9F8]",
+        className
+      )}
+    >
       <div className="flex flex-1 space-x-2">
         <EditText
           onChange={(s) => updateItem(cid, id, { key: s })}
