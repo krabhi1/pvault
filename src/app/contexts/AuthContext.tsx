@@ -13,8 +13,8 @@ type AuthContextProviderProps = React.PropsWithChildren<{}>;
 export function AuthProvider({ children }: AuthContextProviderProps) {
   const unprotectedPaths = ["/signin", "/signout"];
   const [authData, setAuthData] = useImmer<AuthContextType>({
-    username: "",
-    isSignin: false,
+    username: "abhi",
+    isSignin: true,
     signinOrsignup(name) {
       setAuthData((draft) => {
         draft.isSignin = true;

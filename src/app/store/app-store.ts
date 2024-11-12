@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { nanoid } from "nanoid";
+import { produce, WritableDraft } from "immer";
 // import { useShallow } from "zustand/react/shallow";
 export type Collection = {
   id: string;
@@ -12,7 +13,6 @@ export type Collection = {
   //_isChanged:boolean //if name or any child changed
   _originalName?: string;
   _isDeleted: boolean;
-  _isNew: boolean;
 };
 
 export type CItem = {
@@ -25,7 +25,6 @@ export type CItem = {
   _originalkey?: string;
   _originalvalue?: string;
   _isDeleted: boolean;
-  _isNew: boolean;
 };
 
 type State = {
@@ -45,10 +44,77 @@ type Actions = {
     id: string,
     item: Partial<Pick<CItem, "key" | "value">>,
   ) => void;
+  //utils
+  loadFromJsonString: (data: string) => void;
+  mergeChanges: () => void;
+  getUploadData: () => Collection[];
 };
 
+
+const utilsActions = (set: (updater: (draft: State & Actions) => any | void) => void, get: () => State & Actions): Pick<Actions, 'loadFromJsonString' | 'mergeChanges' | 'getUploadData'> => {
+  return {
+    loadFromJsonString(data) {
+      const json = JSON.parse(data) as Collection[]
+      const collections = json.map(c => {
+        c._isDeleted = false
+        c._isExpanded = false
+        return c
+      })
+      set(draft => {
+        draft.collections = collections
+      })
+    },
+    getUploadData: () => {
+      //get all changed data
+      const changedCollections = (JSON.parse(JSON.stringify(get().collections)) as Collection[]).map(c => {
+        //TODO remove unwanted property like _isExpanded
+        c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
+        return c
+      }).filter(c => (c._isDeleted || (c._originalName !== c.name) || c.items.length != 0))
+      return changedCollections
+    },
+    mergeChanges: () => {
+      //org = current for all ,remove _deleted
+      set(d => {
+        d.collections.map(c => {
+          if (c._originalName != c.name) c._originalName = c.name
+          console.log(c._originalName, c.name)
+          c.items = c.items.map(r => {
+            if (r._originalkey != r.key) r._originalkey = r.key
+            if (r._originalvalue != r.value) r._originalvalue = r.value
+            return r
+          })
+          return c
+        })
+        d.collections = d.collections.filter(c => !c._isDeleted)
+      })
+
+    }
+  }
+}
+
+/*
+
+getUploadData: () => {
+      //get all changed data
+      const changedCollections = (JSON.parse(JSON.stringify(get().collections)) as Collection[]).map(c => {
+        c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
+        return c
+      }).filter(c => (c._isDeleted || (c._originalName !== c.name) || c.items.length == 0))
+      return changedCollections
+    },
+    mergeChanges: () => {
+      //org = current for all ,remove _deleted
+      get().collections.filter(c => (c._isDeleted || (c._originalName !== c.name))).map(c => {
+        c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
+        return c
+      })
+    }
+
+*/
+
 export const useAppStore = create<State & Actions>()(
-  immer((set) => ({
+  immer((set, get) => ({
     collections: [],
     addCollection: (name) => {
       set((state) => {
@@ -58,7 +124,6 @@ export const useAppStore = create<State & Actions>()(
           items: [],
           _isExpanded: false,
           _isDeleted: false,
-          _isNew: true,
         });
       });
     },
@@ -86,7 +151,6 @@ export const useAppStore = create<State & Actions>()(
             key,
             value,
             _isDeleted: false,
-            _isNew: true,
           });
         }
       });
@@ -125,7 +189,9 @@ export const useAppStore = create<State & Actions>()(
         }
       });
     },
+    ...utilsActions(set, get),
   })),
+
 );
 
 function genDemoData() {
@@ -180,9 +246,9 @@ genDemoData();
 // };
 // export type Item = ReturnType<typeof useItem>;
 
-// @ts-ignore
-// window.store = useAppStore.getState;
+///@ts-ignore
+window.store = useAppStore.getState;
 
-useAppStore.subscribe((s) => {
-  console.log(s.collections);
-});
+// useAppStore.subscribe((s) => {
+//   console.log(s.collections);
+// });

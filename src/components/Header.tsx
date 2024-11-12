@@ -23,7 +23,9 @@ export default function () {
           <DropdownMenuTrigger>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>{username}</AvatarFallback>
+              <AvatarFallback>
+                {(username[0] || "").toUpperCase()}
+              </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mr-3 p-2">
