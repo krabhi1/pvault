@@ -7,6 +7,8 @@ export type Collection = {
   id: string;
   name: string;
   items: CItem[];
+  createdAt: Date;
+  updatedAt: Date;
   //local
   _isExpanded: boolean;
   //detect changes
@@ -19,6 +21,8 @@ export type CItem = {
   id: string;
   key: string;
   value: string;
+  createdAt: Date;
+  updatedAt: Date;
   //local
   //detect changes
   // _isChanged: boolean;
@@ -125,6 +129,8 @@ export const useAppStore = create<State & Actions>()(
           items: [],
           _isExpanded: false,
           _isDeleted: false,
+          updatedAt: new Date(),
+          createdAt: new Date()
         });
       });
     },
@@ -137,7 +143,9 @@ export const useAppStore = create<State & Actions>()(
     updateCollection: (id, name) => {
       set((state) => {
         const index = state.collections.findIndex((c) => c.id === id);
+        if (index == -1) return
         state.collections[index].name = name;
+        state.collections[index].updatedAt = new Date();
       });
     },
     //items
@@ -152,6 +160,8 @@ export const useAppStore = create<State & Actions>()(
             key,
             value,
             _isDeleted: false,
+            updatedAt: new Date(),
+            createdAt: new Date()
           });
         }
       });
@@ -185,6 +195,7 @@ export const useAppStore = create<State & Actions>()(
             state.collections[collectionIndex].items[itemIndex] = {
               ...state.collections[collectionIndex].items[itemIndex],
               ...item,
+              updatedAt: new Date()
             };
           }
         }
