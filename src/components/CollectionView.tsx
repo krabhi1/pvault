@@ -4,7 +4,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { AccordionHeader } from "@radix-ui/react-accordion";
 //icons
 import { TrashIcon, ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
@@ -15,6 +25,7 @@ import EditText from "./EditText";
 import RecordView from "./RecordView";
 import { Button, buttonVariants } from "./ui/button";
 import { useShallow } from "zustand/react/shallow";
+import { useState } from "react";
 
 export type CollectionViewProps = ReactProps<{
   collection: Collection;
@@ -31,9 +42,9 @@ export default function CollectionView({
       updateCollection: s.updateCollection,
     }))
   );
+  const [isCollDeleteDialogOpen, setIsCollDeleteDialogOpen] = useState(false);
   const status = getCollectionStatus(collection);
   const statusColor = statusToColor(status);
-  console.log(collection, status, statusColor);
 
   return (
     <AccordionItem className={cn("rounded", className)} value={collection.id}>
@@ -48,7 +59,7 @@ export default function CollectionView({
             style={{ backgroundColor: statusColor }}
           ></span>
           <Button
-            onClick={() => deleteCollection(collection.id)}
+            onClick={() => setIsCollDeleteDialogOpen(true)}
             variant="ghost"
             className="w-8 h-8 rounded-full "
           >
@@ -78,6 +89,54 @@ export default function CollectionView({
           New Item
         </Button>
       </AccordionContent>
+      {/* collection delete dialog */}
+      <AlertDialog
+        open={isCollDeleteDialogOpen}
+        onOpenChange={setIsCollDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Confirmation?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              collection
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className={buttonVariants({ variant: "destructive" })}
+              onClick={() => deleteCollection(collection.id)}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AccordionItem>
   );
 }
+
+// export function ConfirmCollectionDeleteDialog(props: { onDelete: () => void,open }) {
+//   const [open, isOpen] = useState(true);
+//   return (
+//     <AlertDialog open={open} onOpenChange={} >
+//       <AlertDialogTrigger asChild>
+//         <Button variant="outline">Show Dialog</Button>
+//       </AlertDialogTrigger>
+//       <AlertDialogContent>
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+//           <AlertDialogDescription>
+//             This action cannot be undone. This will permanently delete your
+//             account and remove your data from our servers.
+//           </AlertDialogDescription>
+//         </AlertDialogHeader>
+//         <AlertDialogFooter>
+//           <AlertDialogCancel >Cancel</AlertDialogCancel>
+//           <AlertDialogAction>Continue</AlertDialogAction>
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+//   );
+// }

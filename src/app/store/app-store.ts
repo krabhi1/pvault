@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { nanoid } from "nanoid";
-import { produce, WritableDraft } from "immer";
+import { useShallow } from "zustand/react/shallow";
+
 // import { useShallow } from "zustand/react/shallow";
 export type Collection = {
   id: string;
@@ -33,6 +34,7 @@ export type CItem = {
 
 type State = {
   collections: Collection[];
+  isConfirmDelete: boolean
 };
 type Actions = {
   //collection
@@ -52,10 +54,14 @@ type Actions = {
   loadFromJsonString: (data: string) => void;
   mergeChanges: () => void;
   getUploadData: () => Collection[];
+  //settings
+  setConfirmDelete: (isConfirm: boolean) => void;
 };
 
-
-const utilsActions = (set: (updater: (draft: State & Actions) => any | void) => void, get: () => State & Actions): Pick<Actions, 'loadFromJsonString' | 'mergeChanges' | 'getUploadData'> => {
+type Setter = (updater: (draft: State & Actions) => any | void) => void
+type Getter = () => State & Actions
+type ReturnType<T extends keyof Actions> = Pick<Actions, T>
+const utilsActions = (set: Setter, get: Getter): ReturnType<'loadFromJsonString' | 'mergeChanges' | 'getUploadData'> => {
   return {
     loadFromJsonString(data) {
       const json = JSON.parse(data) as Collection[]
@@ -98,29 +104,21 @@ const utilsActions = (set: (updater: (draft: State & Actions) => any | void) => 
   }
 }
 
-/*
-
-getUploadData: () => {
-      //get all changed data
-      const changedCollections = (JSON.parse(JSON.stringify(get().collections)) as Collection[]).map(c => {
-        c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
-        return c
-      }).filter(c => (c._isDeleted || (c._originalName !== c.name) || c.items.length == 0))
-      return changedCollections
-    },
-    mergeChanges: () => {
-      //org = current for all ,remove _deleted
-      get().collections.filter(c => (c._isDeleted || (c._originalName !== c.name))).map(c => {
-        c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
-        return c
+const otherActions = (set: Setter, get: Getter): ReturnType<'setConfirmDelete'> => {
+  return {
+    setConfirmDelete(isConfirm) {
+      set(d => {
+        d.isConfirmDelete = isConfirm
       })
-    }
+    },
+  }
+}
 
-*/
 
 export const useAppStore = create<State & Actions>()(
   immer((set, get) => ({
     collections: [],
+    isConfirmDelete: true,
     addCollection: (name) => {
       set((state) => {
         state.collections.push({
@@ -199,12 +197,20 @@ export const useAppStore = create<State & Actions>()(
             };
           }
         }
-      });
+      })
     },
     ...utilsActions(set, get),
+    ...otherActions(set, get)
   })),
 
 );
+
+export function useShallowAppStore<U>(s: (state: State & Actions) => U) {
+  return useAppStore(
+    useShallow(s)
+  )
+}
+
 
 function genDemoData() {
   //gen 5 demo collections

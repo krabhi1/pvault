@@ -9,9 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "./ui/checkbox";
+import { useShallowAppStore } from "@/app/store/app-store";
 
 export default function () {
   const { username } = useAuth();
+  const { isConfirmDelete, setConfirmDelete } = useShallowAppStore((s) => ({
+    isConfirmDelete: s.isConfirmDelete,
+    setConfirmDelete: s.setConfirmDelete,
+  }));
   return (
     <div className="h-12 flex justify-between w-full items-center">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
@@ -28,10 +34,17 @@ export default function () {
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-3 p-2">
+          <DropdownMenuContent className="mr-3 mt-1 p-2">
             <DropdownMenuLabel>{username}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Change password</DropdownMenuItem>
+            <DropdownMenuItem>
+              Delete Confirmation{" "}
+              <Checkbox
+                checked={isConfirmDelete}
+                onCheckedChange={setConfirmDelete}
+              />
+            </DropdownMenuItem>
             <DropdownMenuItem>Export</DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">
               Sign out
