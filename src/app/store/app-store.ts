@@ -265,7 +265,7 @@ genDemoData();
 // export type Item = ReturnType<typeof useItem>;
 
 ///@ts-ignore
-window.store = useAppStore.getState;
+// window.store = useAppStore.getState;
 
 // useAppStore.subscribe((s) => {
 //   console.log(s.collections);
