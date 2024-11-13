@@ -1,6 +1,6 @@
-import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useImmer } from "use-immer";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export type AuthContextType = {
   username: string;
@@ -8,6 +8,7 @@ export type AuthContextType = {
   signinOrsignup: (name: string) => void;
   isSignin: boolean;
 };
+
 const AuthContext = createContext<AuthContextType | null>(null);
 type AuthContextProviderProps = React.PropsWithChildren<{}>;
 export function AuthProvider({ children }: AuthContextProviderProps) {
@@ -27,14 +28,15 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
       });
     },
   });
-  const path = usePathname();
-  const router = useRouter();
+  const location = useLocation();
+  const path = location.pathname;
+  const navigate = useNavigate();
   const isProtected = !unprotectedPaths.includes(path);
 
   useEffect(() => {
     //redirect to /signin path is protected and  not signin
     if (isProtected && !authData.isSignin) {
-      router.push("/signin");
+      navigate("/signin");
     }
   }, [isProtected, authData.isSignin]);
 
