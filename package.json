@@ -41,7 +41,9 @@
     "vite-plugin-cloudflare": "^0.4.1",
     "vite-tsconfig-paths": "^5.1.2",
     "zod": "^3.23.8",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.1",
+    "@hono/zod-validator": "^0.2.1",
+    "hono": "^4.2.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
