@@ -4,10 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "ui:dev": "vite",
+    "api:dev": "npm run api:build && wrangler pages dev dist",
+    "dev": "npm run ui:dev & npm run api:dev",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "ui:build": "tsc -b && vite build",
+    "api:build": "esbuild api/index.ts --bundle --outfile=dist/_worker.js --target=esnext --format=esm",
+    "build": "npm run ui:build && npm run api:build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -34,16 +38,19 @@
     "tailwindcss-animate": "^1.0.7",
     "use-immer": "^0.10.0",
     "uuid": "^10.0.0",
+    "vite-plugin-cloudflare": "^0.4.1",
     "vite-tsconfig-paths": "^5.1.2",
     "zod": "^3.23.8",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241112.0",
     "@eslint/js": "^9.13.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
+    "esbuild": "^0.24.0",
     "eslint": "^9.13.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
