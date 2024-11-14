@@ -1,24 +1,21 @@
 {
-    "compilerOptions": {
-        "target": "ES2020", // Outputs modern JavaScript
-        "module": "ES6", // Uses ES6 modules, compatible with Cloudflare Workers
-        "moduleResolution": "bundler", // Resolves modules like Node.js
-        "lib": [
-            "ES2020",
-            "WebWorker"
-        ], // Includes standard library and WebWorker-specific types
-        "skipLibCheck": true, // Skips type-checking for declaration files
-        "noEmitOnError": false, // Outputs JavaScript even if there are TypeScript errors
-        "types": [
-            "@cloudflare/workers-types"
-        ], // Adds Cloudflare Workers-specific types
-        "allowJs": true, // Allows JavaScript files in case you mix JS and TS
-        "checkJs": false // Ignores type-checking for JavaScript files,
-    },
-    "include": [
-        "./*"
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": [
+      "ESNext"
     ],
-    "exclude": [
-        "node_modules" // Excludes dependencies from the compilation
-    ]
+    "types": [
+      "@cloudflare/workers-types/2023-07-01"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "rootDir": "src"
+  },
+  "include": [
+    "src"
+  ]
 }

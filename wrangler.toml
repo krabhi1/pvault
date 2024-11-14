@@ -1,3 +1,0 @@
-name = "pvault-worker"
-main = "api/index.ts"
-compatibility_date = "2024-11-14"

@@ -33,6 +33,6 @@
     "src"
   ],
   "exclude": [
-    "functions/**/*"
+    "api"
   ],
 }
