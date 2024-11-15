@@ -2,7 +2,7 @@ import CollectionListView from "@/components/CollectionListView";
 import Header from "@/components/Header";
 import { useAppStore } from "@/app/store/app-store";
 import { useShallow } from "zustand/react/shallow";
-export default function () {
+export default function Index() {
   const { collections, addCollection } = useAppStore(
     useShallow((s) => ({
       collections: s.collections,

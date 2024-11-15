@@ -33,7 +33,9 @@ export default function ({
         ref={inputRef}
         placeholder={placeholder}
         onChange={(e) => onChange?.(e.target.value)}
-        className={"focus-visible:ring-0  border-none outline-none shadow-none"}
+        className={
+          "focus-visible:ring-0  border-none outline-none shadow-none focus:border-solid border-blue-100 focus:border"
+        }
         value={value}
         onBlur={() => setIsEditing(false)}
         readOnly={!isEditing}
