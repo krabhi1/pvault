@@ -19,7 +19,11 @@ import { AccordionHeader } from "@radix-ui/react-accordion";
 //icons
 import { TrashIcon, ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { getCollectionStatus, ReactProps, statusToColor } from "./utils";
-import { Collection, useAppStore } from "@/app/store/app-store";
+import {
+  Collection,
+  useAppStore,
+  useShallowAppStore,
+} from "@/app/store/app-store";
 import { cn } from "@/lib/utils";
 import EditText from "./EditText";
 import RecordView from "./RecordView";
@@ -42,6 +46,9 @@ export default function CollectionView({
       updateCollection: s.updateCollection,
     }))
   );
+  const { isConfirmDelete } = useShallowAppStore((s) => ({
+    isConfirmDelete: s.isConfirmDelete,
+  }));
   const [isCollDeleteDialogOpen, setIsCollDeleteDialogOpen] = useState(false);
   const status = getCollectionStatus(collection);
   const statusColor = statusToColor(status);
@@ -59,7 +66,10 @@ export default function CollectionView({
             style={{ backgroundColor: statusColor }}
           ></span>
           <Button
-            onClick={() => setIsCollDeleteDialogOpen(true)}
+            onClick={() => {
+              if (isConfirmDelete) setIsCollDeleteDialogOpen(true);
+              else deleteCollection(collection.id);
+            }}
             variant="ghost"
             className="w-8 h-8 rounded-full "
           >
