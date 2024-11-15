@@ -13,3 +13,7 @@ This project provides a secure way to store private data by encrypting it before
 
 - **Password Recovery**: If a user forgets their password, they cannot recover their data, as decryption relies on the password.
 - **Daily Account Creation Limit**: For security reasons, there may be a limit on the number of new accounts created per day.
+
+### Made with
+
+Vite, React, shadcn for UI, cloudflare with hono for api, Github gist api
