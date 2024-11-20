@@ -34,7 +34,8 @@ export type CItem = {
 
 type State = {
   collections: Collection[];
-  isConfirmDelete: boolean
+  isConfirmDelete: boolean;
+  isAutoSaveOn: boolean;
 };
 type Actions = {
   //collection
@@ -56,6 +57,7 @@ type Actions = {
   getUploadData: () => Collection[];
   //settings
   setConfirmDelete: (isConfirm: boolean) => void;
+  setIsAutoSaveOn: (value: boolean) => void
 };
 
 type Setter = (updater: (draft: State & Actions) => any | void) => void
@@ -104,11 +106,16 @@ const utilsActions = (set: Setter, get: Getter): ReturnType<'loadFromJsonString'
   }
 }
 
-const otherActions = (set: Setter, get: Getter): ReturnType<'setConfirmDelete'> => {
+const otherActions = (set: Setter, get: Getter): ReturnType<'setConfirmDelete' | 'setIsAutoSaveOn'> => {
   return {
     setConfirmDelete(isConfirm) {
       set(d => {
         d.isConfirmDelete = isConfirm
+      })
+    },
+    setIsAutoSaveOn(value) {
+      set(d => {
+        d.isAutoSaveOn = value
       })
     },
   }
@@ -119,6 +126,7 @@ export const useAppStore = create<State & Actions>()(
   immer((set, get) => ({
     collections: [],
     isConfirmDelete: true,
+    isAutoSaveOn: true,
     addCollection: (name) => {
       set((state) => {
         state.collections.push({
