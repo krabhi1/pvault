@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -33,9 +34,7 @@ export default function ({
         ref={inputRef}
         placeholder={placeholder}
         onChange={(e) => onChange?.(e.target.value)}
-        className={
-          "focus-visible:ring-0  border-none outline-none shadow-none focus:border-solid border-blue-100 focus:border"
-        }
+        className={"focus-visible:ring-0  border-none outline-none shadow-none"}
         value={value}
         onBlur={() => setIsEditing(false)}
         readOnly={!isEditing}

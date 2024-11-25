@@ -14,13 +14,10 @@ import { useShallowAppStore } from "@/app/store/app-store";
 
 export default function () {
   const { username } = useAuth();
-  const { isConfirmDelete, setConfirmDelete, isAutoSaveOn, setIsAutoSaveOn } =
-    useShallowAppStore((s) => ({
-      isConfirmDelete: s.isConfirmDelete,
-      setConfirmDelete: s.setConfirmDelete,
-      isAutoSaveOn: s.isAutoSaveOn,
-      setIsAutoSaveOn: s.setIsAutoSaveOn,
-    }));
+  const { isConfirmDelete, setConfirmDelete } = useShallowAppStore((s) => ({
+    isConfirmDelete: s.isConfirmDelete,
+    setConfirmDelete: s.setConfirmDelete,
+  }));
   return (
     <div className="h-12 flex justify-between w-full items-center">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
@@ -46,13 +43,6 @@ export default function () {
               <Checkbox
                 checked={isConfirmDelete}
                 onCheckedChange={setConfirmDelete}
-              />
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Auto save{" "}
-              <Checkbox
-                checked={isAutoSaveOn}
-                onCheckedChange={setIsAutoSaveOn}
               />
             </DropdownMenuItem>
             <DropdownMenuItem>Export</DropdownMenuItem>

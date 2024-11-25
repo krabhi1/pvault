@@ -1,12 +1,21 @@
 "use client";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +25,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { ReloadIcon, CheckCircledIcon } from "@radix-ui/react-icons";
+import { Console } from "console";
+import { useEffect } from "react";
+import { LoadSpin } from "../../../temp/app/components/Loading";
+import {
+  ReloadIcon,
+  RocketIcon,
+  CheckCircledIcon,
+} from "@radix-ui/react-icons";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z.object({
@@ -24,7 +40,7 @@ const formSchema = z.object({
   newPassword: z.string().min(5).max(50),
 });
 
-export default function ChangePassword() {
+export default function () {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
