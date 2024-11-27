@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
-import AllProvider from "./AllProvider";
+import AppContext from "@/contexts/AppContext";
 
 export const metadata: Metadata = {
   title: "pvault",
@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AllProvider>{children}</AllProvider>
+        <AppContext>{children}</AppContext>
       </body>
     </html>
   );

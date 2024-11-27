@@ -1,4 +1,4 @@
-import { CItem, useAppStore, useShallowAppStore } from "@/app/store/app-store";
+import { CItem, useAppStore, useShallowAppStore } from "@/store/app-store";
 //icons from
 import { TrashIcon, CopyIcon } from "@radix-ui/react-icons";
 import EditText from "./EditText";

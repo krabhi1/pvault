@@ -1,4 +1,4 @@
-import { useAuth } from "@/app/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "./ui/checkbox";
-import { useShallowAppStore } from "@/app/store/app-store";
+import { useShallowAppStore } from "@/store/app-store";
 
 export default function () {
   const { username } = useAuth();

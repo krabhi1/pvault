@@ -1,5 +1,5 @@
 "use client";
-import { Collection, CItem, useAppStore } from "@/app/store/app-store";
+import { Collection, CItem, useAppStore } from "@/store/app-store";
 import { Button } from "@/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -52,7 +52,11 @@ function EditableText(props: EditableTextProps) {
         onClick={onClick}
         ref={divRef}
         contentEditable={isEditing}
-        className={` edit-text ${isEditing ? "whitespace-pre-wrap break-words" : "text-nowrap overflow-hidden "}   w-full border border-transparent p-1 box-border focus:border focus:border-slate-300 focus:outline-none   `}
+        className={` edit-text ${
+          isEditing
+            ? "whitespace-pre-wrap break-words"
+            : "text-nowrap overflow-hidden "
+        }   w-full border border-transparent p-1 box-border focus:border focus:border-slate-300 focus:outline-none   `}
         onInput={(e) => props.onChange?.(e.currentTarget.textContent || "")}
         onKeyDown={(e) => {
           console.log(e.key);
@@ -87,7 +91,7 @@ export default function () {
     useShallow((state) => ({
       collections: state.collections,
       addCollection: state.addCollection,
-    })),
+    }))
   );
 
   const [value, setValue] = useState("hello");
@@ -116,7 +120,7 @@ function CollectionView({ collection }: { collection: Collection }) {
       addItem: state.addItem,
       deleteCollection: state.deleteCollection,
       updateCollection: state.updateCollection,
-    })),
+    }))
   );
   return (
     <AccordionItem value={collection.id}>
@@ -159,7 +163,7 @@ function ItemView({ item, cid }: { item: CItem; cid: string }) {
       addItem: state.addItem,
       deleteCollection: state.deleteCollection,
       updateCollection: state.updateCollection,
-    })),
+    }))
   );
   return (
     <div className="border flex w-full">

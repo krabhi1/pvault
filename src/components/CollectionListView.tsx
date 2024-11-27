@@ -1,4 +1,4 @@
-import { Collection } from "@/app/store/app-store";
+import { Collection } from "@/store/app-store";
 import { Accordion } from "./ui/accordion";
 import CollectionView from "./CollectionView";
 import { ReactProps } from "./utils";

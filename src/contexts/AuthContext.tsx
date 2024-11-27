@@ -4,6 +4,7 @@ import { useImmer } from "use-immer";
 
 export type AuthContextType = {
   username: string;
+  password: string;
   signout: () => void;
   signinOrsignup: (name: string) => void;
   isSignin: boolean;
@@ -14,6 +15,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
   const unprotectedPaths = ["/signin", "/signout"];
   const [authData, setAuthData] = useImmer<AuthContextType>({
     username: "abhi",
+    password: "123",
     isSignin: true,
     signinOrsignup(name) {
       setAuthData((draft) => {

@@ -23,6 +23,7 @@ import {
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { EnvelopeOpenIcon } from "@radix-ui/react-icons";
 import { LoginForm } from "@/components/login-form";
+import { PropsWithChildren } from "react";
 
 export default function () {
   return (
@@ -102,4 +103,29 @@ function Components() {
   );
 }
 
-function Form() {}
+function Form() {
+  return (
+    <div>
+      <div className="px-3">
+        <AlertDialog></AlertDialog>
+      </div>
+    </div>
+  );
+}
+
+type User = {
+  name: string;
+  age: number;
+};
+
+function UserView({ children, user }: PropsWithChildren<{ user: User }>) {
+  return (
+    <div>
+      <div>{children}</div>
+      <div>
+        {user.age}
+        {user.name}
+      </div>
+    </div>
+  );
+}

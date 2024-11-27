@@ -9,7 +9,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import CollectionListView from "@/components/CollectionListView";
-import { useAppStore } from "@/app/store/app-store";
+import { useAppStore } from "@/store/app-store";
 export default function () {
   const collections = useAppStore.getState().collections;
   return (

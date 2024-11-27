@@ -1,21 +1,12 @@
 "use client";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,14 +16,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Console } from "console";
-import { useEffect } from "react";
-import { LoadSpin } from "../../../temp/app/components/Loading";
-import {
-  ReloadIcon,
-  RocketIcon,
-  CheckCircledIcon,
-} from "@radix-ui/react-icons";
+import { ReloadIcon, CheckCircledIcon } from "@radix-ui/react-icons";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z.object({

@@ -1,4 +1,4 @@
-import { CItem, Collection } from "@/app/store/app-store";
+import { CItem, Collection } from "@/store/app-store";
 
 export type ReactProps<T> = {
   children?: React.ReactNode;

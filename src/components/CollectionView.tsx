@@ -19,11 +19,7 @@ import { AccordionHeader } from "@radix-ui/react-accordion";
 //icons
 import { TrashIcon, ChevronDownIcon, PlusIcon } from "@radix-ui/react-icons";
 import { getCollectionStatus, ReactProps, statusToColor } from "./utils";
-import {
-  Collection,
-  useAppStore,
-  useShallowAppStore,
-} from "@/app/store/app-store";
+import { Collection, useAppStore, useShallowAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import EditText from "./EditText";
 import RecordView from "./RecordView";
