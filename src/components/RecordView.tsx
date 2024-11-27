@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { Separator } from "./ui/separator";
 
 export type RecordViewProps = {
   item: CItem;
@@ -45,16 +46,18 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
         className
       )}
     >
-      <div className="flex flex-1 space-x-2">
+      <div className="flex flex-1 space-x-2 items-center">
         <EditText
           onChange={(s) => updateItem(cid, id, { key: s })}
           value={item.key}
           className="flex-1 w-0"
         />
+        <Separator orientation="vertical" className="h-[24px]" />
         <EditText
           onChange={(s) => updateItem(cid, id, { value: s })}
           value={item.value}
           isMultiline
+          isSecret
           className="flex-1 w-0"
         />
       </div>

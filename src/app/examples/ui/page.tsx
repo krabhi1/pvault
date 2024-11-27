@@ -9,18 +9,41 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import CollectionListView from "@/components/CollectionListView";
-import { useAppStore } from "@/store/app-store";
-export default function () {
-  const collections = useAppStore.getState().collections;
+import { CItem, useAppStore, useShallowAppStore } from "@/store/app-store";
+import { useState } from "react";
+import EditText from "@/components/EditText";
+export default function UI() {
+  const { collections } = useShallowAppStore((s) => ({
+    collections: s.collections,
+  }));
+  if (collections.length == 0) return;
   return (
     <div className="w-full px-4 py-2 space-y-3">
       <Header />
       <TestBox>
-        <RecordView item={{} as any} />
+        <EditTextTest />
       </TestBox>
       <TestBox>
         <CollectionListView collections={collections} />
       </TestBox>
+    </div>
+  );
+}
+
+function EditTextTest() {
+  const [text, setText] = useState("hello");
+  console.log(text);
+  return (
+    <div className="flex flex-col gap-2 p-2">
+      <EditText className="border" value={text} onChange={setText} />
+      <EditText className="border" value={text} onChange={setText} isSecret />
+      <EditText className="border" placeholder="write here" />
+      <EditText
+        className="border"
+        value={text}
+        onChange={setText}
+        isMultiline
+      />
     </div>
   );
 }
@@ -35,11 +58,11 @@ function TestBox({
   return (
     <ResizablePanelGroup className="p-3 gap-2 shadow-md" direction="horizontal">
       <ResizablePanel defaultSize={50}>
-        <Card className={cn("flex  p-2", className)}>{children}</Card>
+        <div className="border p-2">{children}</div>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel defaultSize={50}>
-        <Card className={cn("flex  p-2", className)}>{children}</Card>
+        <div className="border p-2">{children}</div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );
