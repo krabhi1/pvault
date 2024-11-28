@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import AppContext from "@/contexts/AppContext";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "pvault",
@@ -17,6 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppContext>{children}</AppContext>
+        <Toaster />
       </body>
     </html>
   );

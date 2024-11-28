@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { Separator } from "./ui/separator";
+import { useToast } from "@/hooks/use-toast";
 
 export type RecordViewProps = {
   item: CItem;
@@ -31,6 +32,7 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
       deleteItem: s.deleteItem,
     }))
   );
+  const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { isConfirmDelete } = useShallowAppStore((s) => ({
@@ -67,7 +69,16 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
           style={{ backgroundColor: statusColor }}
         ></span>
         <Button
-          onClick={() => copyTextToClipboard(item.value)}
+          onClick={() => {
+            copyTextToClipboard(item.value);
+            const t = toast({
+              title: "Clipboard",
+              description: "Text copied to clipboard!",
+            });
+            setTimeout(() => {
+              t.dismiss();
+            }, 2000);
+          }}
           size={"sm"}
           variant="ghost"
           className="w-8 h-8 rounded-full"
