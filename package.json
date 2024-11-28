@@ -2,6 +2,7 @@
   "name": "pvalut",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
@@ -20,8 +21,10 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
+    "axios": "^1.7.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "hono": "^4.6.12",
     "immer": "^10.1.1",
     "lucide-react": "^0.454.0",
     "nanoid": "^5.0.8",
@@ -49,6 +52,7 @@
     "eslint-config-next": "14.2.5",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.1.6"
   }
 }
