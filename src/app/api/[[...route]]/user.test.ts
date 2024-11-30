@@ -31,9 +31,35 @@ describe("User flow", async () => {
       json: { username, password },
     });
     const body = await res.json();
-    console.log(body);
 
     expect(res.status).toBe(409);
     expect(body.error!.message).toBe("Username already exist");
+  });
+  it("should signin successfully", async () => {
+    const res = await client.signin.$post({
+      json: { username, password },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.data).toBe("Signin successfully");
+  });
+  it("should fail if  signin with wrong username", async () => {
+    const res = await client.signin.$post({
+      json: { username: username + username, password },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.error!.message).toBe("Username not exist");
+  });
+  it("should fail if  signin with wrong password", async () => {
+    const res = await client.signin.$post({
+      json: { username: username, password: password + password },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.error!.message).toBe("Incorrect password");
   });
 });

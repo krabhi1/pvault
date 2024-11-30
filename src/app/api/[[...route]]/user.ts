@@ -1,10 +1,15 @@
-import { makeResponse, onError } from "@/server/utils";
+import {
+  downloadFile,
+  makeResponse,
+  onError,
+  verifyUser,
+} from "@/server/utils";
 import { Hono } from "hono";
 import { basicAuth } from "hono/basic-auth";
 import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { encrypt } from "@/server/crypt";
+import { decrypt, encrypt } from "@/server/crypt";
 import { upsert, getFiles, remove } from "@/server/github";
 
 function zHttpExceptionHook(parsed: any, c: any) {
@@ -52,9 +57,33 @@ const app = new Hono()
       return makeResponse(c, { data: "User created successfully" }, 201);
     }
   )
-  .post("/signin", (c) => {
-    return c.json({ message: "User created successfully" }, 201);
-  })
+  .post(
+    "/signin",
+    zValidator(
+      "json",
+      z.object({
+        username: z.string().min(3),
+        password: z.string().min(5),
+      }),
+      zHttpExceptionHook
+    ),
+    async (c) => {
+      const { username, password } = c.req.valid("json");
+      const files = await getFiles();
+      const file = files.find((file) => file.name == username);
+      if (!file) {
+        throw new HTTPException(400, { message: "Username not exist" });
+      }
+      //check password match
+      const content = await downloadFile(file.url);
+      try {
+        decrypt(content, password);
+      } catch (error) {
+        throw new HTTPException(400, { message: "Incorrect password" });
+      }
+      return makeResponse(c, { data: "Signin successfully" });
+    }
+  )
   .delete(
     ":username",
     zValidator(

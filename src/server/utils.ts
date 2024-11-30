@@ -1,6 +1,9 @@
 import { HTTPException } from "hono/http-exception";
 import { Context } from "hono";
 import { StatusCode } from "hono/utils/http-status";
+import axios from "axios";
+import { GistFile } from "./github";
+import { decrypt } from "./crypt";
 
 // export async function isUserExist(name: string) {
 //   try {
@@ -55,4 +58,19 @@ export function onError(err: HTTPException | Error, c: Context) {
     },
     500
   );
+}
+
+export async function downloadFile(url: string) {
+  const result = await axios.get(url, { responseType: "text" });
+  return result.data as string;
+}
+
+export async function verifyUser(file: GistFile, password: string) {
+  const content = await downloadFile(file.url);
+  try {
+    const decrypted = decrypt(content, password);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
