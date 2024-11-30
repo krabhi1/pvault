@@ -71,12 +71,12 @@ app.delete('/user/:username', async (c) => {
     })
 })
 // -------data---------
-app.get('/data', (c) => {
+app.get('/user/:name/collections', (c) => {
     return c.json({
         message: 'Hello PVault!',
     })
 })
-app.post('/data', (c) => {
+app.patch('/user/:name/collections', (c) => {
     return c.json({
         message: 'Hello PVault!',
     })
@@ -98,4 +98,5 @@ export const GET = handle(app)
 export const POST = handle(app)
 export const PUT = handle(app)
 export const DELETE = handle(app)
+export const PATCH = handle(app)
 export { app }

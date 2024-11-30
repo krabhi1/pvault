@@ -3,7 +3,24 @@ import { getFile, upsert } from "../../../server/gist-file"
 import { describe, it, expect } from 'vitest'
 import { app } from './route'
 
-describe('User', () => {
+describe('User flow', () => {
+    //delete if exist
+    //create account
+    //recreate must have error
+    //sigin must success
+    //get data
+    //update data
+    //call api with expired token must have error
+    //sigin again with for new token
+    //get data
+    //delete account
+    //sigin again [error]
+    //delete account [error]
+
+    //--auth test--
+    //call protected api with invalid token [error]
+    //try to get other user data with valid token [error]
+
 
     it("POST signup", async () => {
         const res = await app.request('/api/hello', {
