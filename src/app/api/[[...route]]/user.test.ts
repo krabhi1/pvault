@@ -7,7 +7,7 @@ app.onError(onError);
 
 describe("User flow", async () => {
   let client: ReturnType<typeof testClient<typeof app>>;
-  const username = "demo5";
+  const username = "demo";
   const password = "12345";
 
   beforeAll(async () => {
@@ -21,9 +21,19 @@ describe("User flow", async () => {
       json: { username, password },
     });
     const body = await res.json();
-    console.log(body);
 
     expect(res.status).toBe(201);
     expect(body.data).toBe("User created successfully");
+  });
+
+  it("should fail if signup with same username", async () => {
+    const res = await client.signup.$post({
+      json: { username, password },
+    });
+    const body = await res.json();
+    console.log(body);
+
+    expect(res.status).toBe(409);
+    expect(body.error!.message).toBe("Username already exist");
   });
 });

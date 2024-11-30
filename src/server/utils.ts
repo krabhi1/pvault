@@ -1,23 +1,22 @@
 import { HTTPException } from "hono/http-exception";
-import { getFile } from "./github";
 import { Context } from "hono";
 import { StatusCode } from "hono/utils/http-status";
 
-export async function isUserExist(name: string) {
-  try {
-    const file = await getFile(name); // Check if the file exists
-    console.log({ name, file });
-    return true;
-  } catch (error) {
-    console.log(error);
-    // Handle known 404 errors (file not found)
-    if (error instanceof HTTPException && error.status === 404) {
-      return false;
-    }
-    // Rethrow unexpected errors
-    throw error;
-  }
-}
+// export async function isUserExist(name: string) {
+//   try {
+//     const file = await getFile(name); // Check if the file exists
+//     console.log({ name, file });
+//     return true;
+//   } catch (error) {
+//     console.log(error);
+//     // Handle known 404 errors (file not found)
+//     if (error instanceof HTTPException && error.status === 404) {
+//       return false;
+//     }
+//     // Rethrow unexpected errors
+//     throw error;
+//   }
+// }
 
 export function makeResponse(
   ctx: Context,
