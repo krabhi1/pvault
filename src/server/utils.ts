@@ -68,9 +68,9 @@ export async function downloadFile(url: string) {
 export async function verifyUser(file: GistFile, password: string) {
   const content = await downloadFile(file.url);
   try {
-    const decrypted = decrypt(content, password);
-    return true;
+    decrypt(content, password);
   } catch (error) {
-    return false;
+    //TODO check if really password is wrong by check the error
+    throw new HTTPException(400, { message: "Incorrect password" });
   }
 }

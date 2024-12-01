@@ -13,7 +13,9 @@ describe("User flow", async () => {
   beforeAll(async () => {
     client = testClient(app);
     //delete the user if exist
-    await client[":username"].$delete({ param: { username } });
+    await client[":username"].$delete({
+      param: { username },
+    });
   });
 
   it("should successfully sign up a new user", async () => {
@@ -61,5 +63,23 @@ describe("User flow", async () => {
 
     expect(res.status).toBe(400);
     expect(body.error!.message).toBe("Incorrect password");
+  });
+  it("should delete successfuly ", async () => {
+    const res = await client[":username"].$delete({
+      param: { username },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.data).toBe("User deleted successfully");
+  });
+  it("should fail if delete again ", async () => {
+    const res = await client[":username"].$delete({
+      param: { username },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(404);
+    expect(body.error!.message).toBe("Username not exist");
   });
 });

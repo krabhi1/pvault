@@ -41,16 +41,20 @@ export async function upsert(name: string, content: string) {
 // }
 
 export async function remove(name: string) {
-  const result = await octokit.request("PATCH /gists/" + env.githubGistId, {
-    gist_id: env.githubGistId,
-    files: {
-      [name]: null,
-    },
-    headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
-  return result;
+  try {
+    const result = await octokit.request("PATCH /gists/" + env.githubGistId, {
+      gist_id: env.githubGistId,
+      files: {
+        [name]: null,
+      },
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+    return result;
+  } catch (error) {
+    throw new HTTPException(404, { message: "Username not exist" });
+  }
 }
 export type GistFile = {
   name: string;

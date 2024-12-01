@@ -90,10 +90,12 @@ const app = new Hono()
       "param",
       z.object({
         username: z.string().min(3),
-      })
+      }),
+      zHttpExceptionHook
     ),
     async (c) => {
       const { username } = c.req.valid("param");
+
       await remove(username);
 
       return makeResponse(c, { data: "User deleted successfully" }, 200);
