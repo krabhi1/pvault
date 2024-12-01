@@ -1,11 +1,5 @@
-import {
-  downloadFile,
-  makeResponse,
-  onError,
-  verifyUser,
-} from "@/server/utils";
+import { downloadFile, makeResponse, handleBasicAuth } from "@/server/utils";
 import { Hono } from "hono";
-import { basicAuth } from "hono/basic-auth";
 import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
@@ -20,7 +14,15 @@ function zHttpExceptionHook(parsed: any, c: any) {
     });
   }
 }
-const app = new Hono()
+type Env = {
+  Variables: {
+    authUser?: {
+      username: string;
+      password: string;
+    };
+  };
+};
+const app = new Hono<Env>()
   .post(
     "/signup",
     zValidator(
@@ -84,22 +86,12 @@ const app = new Hono()
       return makeResponse(c, { data: "Signin successfully" });
     }
   )
-  .delete(
-    ":username",
-    zValidator(
-      "param",
-      z.object({
-        username: z.string().min(3),
-      }),
-      zHttpExceptionHook
-    ),
-    async (c) => {
-      const { username } = c.req.valid("param");
+  .delete("", handleBasicAuth, async (c) => {
+    const { username } = c.var.authUser!!;
 
-      await remove(username);
+    await remove(username);
 
-      return makeResponse(c, { data: "User deleted successfully" }, 200);
-    }
-  );
+    return makeResponse(c, { data: "User deleted successfully" }, 200);
+  });
 
 export default app;

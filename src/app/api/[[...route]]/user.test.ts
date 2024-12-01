@@ -2,8 +2,8 @@ import { testClient } from "hono/testing";
 import app from "./user";
 import { describe, it, expect, beforeAll } from "vitest";
 import { Hono } from "hono";
-import { onError } from "@/server/utils";
-app.onError(onError);
+import { handleError } from "@/server/utils";
+app.onError(handleError);
 
 describe("User flow", async () => {
   let client: ReturnType<typeof testClient<typeof app>>;
@@ -13,8 +13,13 @@ describe("User flow", async () => {
   beforeAll(async () => {
     client = testClient(app);
     //delete the user if exist
-    await client[":username"].$delete({
-      param: { username },
+    const encodedCredentials = Buffer.from(`${username}:${password}`).toString(
+      "base64"
+    );
+    await client.index.$delete(undefined, {
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+      },
     });
   });
 
@@ -37,6 +42,7 @@ describe("User flow", async () => {
     expect(res.status).toBe(409);
     expect(body.error!.message).toBe("Username already exist");
   });
+  // signin
   it("should signin successfully", async () => {
     const res = await client.signin.$post({
       json: { username, password },
@@ -64,9 +70,43 @@ describe("User flow", async () => {
     expect(res.status).toBe(400);
     expect(body.error!.message).toBe("Incorrect password");
   });
+  // delete
+  it("should fail if delete with wrong password ", async () => {
+    const encodedCredentials = Buffer.from(
+      `${username}:${password}error`
+    ).toString("base64");
+    const res = await client.index.$delete(undefined, {
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+      },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(body.error!.message).toBe("Incorrect password");
+  });
+  it("should fail if username not exist ", async () => {
+    const encodedCredentials = Buffer.from(
+      `${username}error:${password}`
+    ).toString("base64");
+    const res = await client.index.$delete(undefined, {
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+      },
+    });
+    const body = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(body.error!.message).toBe("Username not exist");
+  });
   it("should delete successfuly ", async () => {
-    const res = await client[":username"].$delete({
-      param: { username },
+    const encodedCredentials = Buffer.from(`${username}:${password}`).toString(
+      "base64"
+    );
+    const res = await client.index.$delete(undefined, {
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+      },
     });
     const body = await res.json();
 
@@ -74,12 +114,17 @@ describe("User flow", async () => {
     expect(body.data).toBe("User deleted successfully");
   });
   it("should fail if delete again ", async () => {
-    const res = await client[":username"].$delete({
-      param: { username },
+    const encodedCredentials = Buffer.from(`${username}:${password}`).toString(
+      "base64"
+    );
+    const res = await client.index.$delete(undefined, {
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+      },
     });
     const body = await res.json();
 
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(401);
     expect(body.error!.message).toBe("Username not exist");
   });
 });

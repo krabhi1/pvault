@@ -2,8 +2,9 @@ import { HTTPException } from "hono/http-exception";
 import { Context } from "hono";
 import { StatusCode } from "hono/utils/http-status";
 import axios from "axios";
-import { GistFile } from "./github";
+import { getFiles } from "./github";
 import { decrypt } from "./crypt";
+import { basicAuth } from "hono/basic-auth";
 
 // export async function isUserExist(name: string) {
 //   try {
@@ -35,7 +36,8 @@ export function makeResponse(
   return ctx.json(data, code);
 }
 
-export function onError(err: HTTPException | Error, c: Context) {
+export function handleError(err: HTTPException | Error, c: Context) {
+  console.log("Error ", err.message);
   if (err instanceof HTTPException) {
     return makeResponse(
       c,
@@ -65,12 +67,25 @@ export async function downloadFile(url: string) {
   return result.data as string;
 }
 
-export async function verifyUser(file: GistFile, password: string) {
+async function verifyUser(username: string, password: string) {
+  const files = await getFiles();
+  const file = files.find((file) => file.name == username);
+  if (!file) {
+    throw new HTTPException(401, { message: "Username not exist" });
+  }
   const content = await downloadFile(file.url);
   try {
     decrypt(content, password);
   } catch (error) {
     //TODO check if really password is wrong by check the error
-    throw new HTTPException(400, { message: "Incorrect password" });
+    throw new HTTPException(401, { message: "Incorrect password" });
   }
 }
+
+export const handleBasicAuth = basicAuth({
+  async verifyUser(username, password, c) {
+    c.set("authUser", { username, password });
+    await verifyUser(username, password);
+    return true;
+  },
+});

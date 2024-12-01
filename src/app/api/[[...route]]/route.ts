@@ -5,7 +5,7 @@ import { env } from "@/server/env";
 import user from "./user";
 import collection from "./collection";
 import { HTTPException } from "hono/http-exception";
-import { makeResponse, onError } from "@/server/utils";
+import { makeResponse, handleError } from "@/server/utils";
 
 export const runtime = "nodejs";
 
@@ -15,7 +15,7 @@ app.use(logger());
 app.route("/user", user);
 app.route("/collection", collection);
 
-app.onError(onError);
+app.onError(handleError);
 
 export const GET = handle(app);
 export const POST = handle(app);
