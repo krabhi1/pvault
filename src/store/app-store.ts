@@ -36,6 +36,7 @@ type State = {
   collections: Collection[];
   isConfirmDelete: boolean;
   isAutoSaveOn: boolean;
+  isShowDeleted: boolean;
 };
 type Actions = {
   //collection
@@ -49,7 +50,7 @@ type Actions = {
   updateItem: (
     collectionId: string,
     id: string,
-    item: Partial<Pick<CItem, "key" | "value">>,
+    item: Partial<Pick<CItem, "key" | "value">>
   ) => void;
   //utils
   loadFromJsonString: (data: string) => void;
@@ -57,76 +58,99 @@ type Actions = {
   getUploadData: () => Collection[];
   //settings
   setConfirmDelete: (isConfirm: boolean) => void;
-  setIsAutoSaveOn: (value: boolean) => void
+  setIsAutoSaveOn: (value: boolean) => void;
+  setIsShowDelete: (value: boolean) => void;
 };
 
-type Setter = (updater: (draft: State & Actions) => any | void) => void
-type Getter = () => State & Actions
-type ReturnType<T extends keyof Actions> = Pick<Actions, T>
-const utilsActions = (set: Setter, get: Getter): ReturnType<'loadFromJsonString' | 'mergeChanges' | 'getUploadData'> => {
+type Setter = (updater: (draft: State & Actions) => any | void) => void;
+type Getter = () => State & Actions;
+type ReturnType<T extends keyof Actions> = Pick<Actions, T>;
+const utilsActions = (
+  set: Setter,
+  get: Getter
+): ReturnType<"loadFromJsonString" | "mergeChanges" | "getUploadData"> => {
   return {
     loadFromJsonString(data) {
-      const json = JSON.parse(data) as Collection[]
-      const collections = json.map(c => {
-        c._isDeleted = false
-        c._isExpanded = false
-        return c
-      })
-      set(draft => {
-        draft.collections = collections
-      })
+      const json = JSON.parse(data) as Collection[];
+      const collections = json.map((c) => {
+        c._isDeleted = false;
+        c._isExpanded = false;
+        return c;
+      });
+      set((draft) => {
+        draft.collections = collections;
+      });
     },
     getUploadData: () => {
       //get all changed data
       //TODO remove (new and deleted)
-      const changedCollections = (JSON.parse(JSON.stringify(get().collections)) as Collection[]).map(c => {
-        //TODO remove unwanted property like _isExpanded
-        c.items = c.items.filter(r => (r._isDeleted || (r.key != r._originalkey) || (r.value != r._originalvalue)))
-        return c
-      }).filter(c => (c._isDeleted || (c._originalName !== c.name) || c.items.length != 0))
-      return changedCollections
+      const changedCollections = (
+        JSON.parse(JSON.stringify(get().collections)) as Collection[]
+      )
+        .map((c) => {
+          //TODO remove unwanted property like _isExpanded
+          c.items = c.items.filter(
+            (r) =>
+              r._isDeleted ||
+              r.key != r._originalkey ||
+              r.value != r._originalvalue
+          );
+          return c;
+        })
+        .filter(
+          (c) =>
+            c._isDeleted || c._originalName !== c.name || c.items.length != 0
+        );
+      return changedCollections;
     },
     mergeChanges: () => {
       //org = current for all ,remove _deleted
-      set(d => {
-        d.collections.map(c => {
-          if (c._originalName != c.name) c._originalName = c.name
-          console.log(c._originalName, c.name)
-          c.items = c.items.map(r => {
-            if (r._originalkey != r.key) r._originalkey = r.key
-            if (r._originalvalue != r.value) r._originalvalue = r.value
-            return r
-          })
-          return c
-        })
-        d.collections = d.collections.filter(c => !c._isDeleted)
-      })
+      set((d) => {
+        d.collections.map((c) => {
+          if (c._originalName != c.name) c._originalName = c.name;
+          console.log(c._originalName, c.name);
+          c.items = c.items.map((r) => {
+            if (r._originalkey != r.key) r._originalkey = r.key;
+            if (r._originalvalue != r.value) r._originalvalue = r.value;
+            return r;
+          });
+          return c;
+        });
+        d.collections = d.collections.filter((c) => !c._isDeleted);
+      });
+    },
+  };
+};
 
-    }
-  }
-}
-
-const otherActions = (set: Setter, get: Getter): ReturnType<'setConfirmDelete' | 'setIsAutoSaveOn'> => {
+const settingActions = (
+  set: Setter,
+  get: Getter
+): ReturnType<"setIsShowDelete" | "setConfirmDelete" | "setIsAutoSaveOn"> => {
   return {
     setConfirmDelete(isConfirm) {
-      set(d => {
-        d.isConfirmDelete = isConfirm
-      })
+      set((d) => {
+        d.isConfirmDelete = isConfirm;
+      });
     },
     setIsAutoSaveOn(value) {
-      set(d => {
-        d.isAutoSaveOn = value
-      })
+      set((d) => {
+        d.isAutoSaveOn = value;
+      });
     },
-  }
-}
-
+    setIsShowDelete(value) {
+      set((d) => {
+        d.isShowDeleted = value;
+      });
+    },
+  };
+};
 
 export const useAppStore = create<State & Actions>()(
   immer((set, get) => ({
     collections: [],
     isConfirmDelete: true,
     isAutoSaveOn: true,
+    isShowDeleted: false,
     addCollection: (name) => {
       set((state) => {
         state.collections.push({
@@ -136,7 +160,7 @@ export const useAppStore = create<State & Actions>()(
           _isExpanded: false,
           _isDeleted: false,
           updatedAt: new Date(),
-          createdAt: new Date()
+          createdAt: new Date(),
         });
       });
     },
@@ -144,12 +168,16 @@ export const useAppStore = create<State & Actions>()(
       set((state) => {
         const index = state.collections.findIndex((c) => c.id === id);
         state.collections[index]._isDeleted = true;
+        // make all items deletd
+        state.collections[index].items.forEach((item) => {
+          item._isDeleted = true;
+        });
       });
     },
     updateCollection: (id, name) => {
       set((state) => {
         const index = state.collections.findIndex((c) => c.id === id);
-        if (index == -1) return
+        if (index == -1) return;
         state.collections[index].name = name;
         state.collections[index].updatedAt = new Date();
       });
@@ -158,7 +186,7 @@ export const useAppStore = create<State & Actions>()(
     addItem: (collectionId, key, value) => {
       set((state) => {
         const collectionIndex = state.collections.findIndex(
-          (c) => c.id === collectionId,
+          (c) => c.id === collectionId
         );
         if (collectionIndex != -1) {
           state.collections[collectionIndex].items.push({
@@ -167,7 +195,7 @@ export const useAppStore = create<State & Actions>()(
             value,
             _isDeleted: false,
             updatedAt: new Date(),
-            createdAt: new Date()
+            createdAt: new Date(),
           });
         }
       });
@@ -175,11 +203,11 @@ export const useAppStore = create<State & Actions>()(
     deleteItem: (collectionId, id) => {
       set((state) => {
         const collectionIndex = state.collections.findIndex(
-          (c) => c.id === collectionId,
+          (c) => c.id === collectionId
         );
         if (collectionIndex != -1) {
           const itemIndex = state.collections[collectionIndex].items.findIndex(
-            (i) => i.id === id,
+            (i) => i.id === id
           );
           if (itemIndex != -1) {
             state.collections[collectionIndex].items[itemIndex]._isDeleted =
@@ -191,34 +219,30 @@ export const useAppStore = create<State & Actions>()(
     updateItem: (collectionId, id, item) => {
       set((state) => {
         const collectionIndex = state.collections.findIndex(
-          (c) => c.id === collectionId,
+          (c) => c.id === collectionId
         );
         if (collectionIndex != -1) {
           const itemIndex = state.collections[collectionIndex].items.findIndex(
-            (i) => i.id === id,
+            (i) => i.id === id
           );
           if (itemIndex != -1) {
             state.collections[collectionIndex].items[itemIndex] = {
               ...state.collections[collectionIndex].items[itemIndex],
               ...item,
-              updatedAt: new Date()
+              updatedAt: new Date(),
             };
           }
         }
-      })
+      });
     },
     ...utilsActions(set, get),
-    ...otherActions(set, get)
-  })),
-
+    ...settingActions(set, get),
+  }))
 );
 
 export function useShallowAppStore<U>(s: (state: State & Actions) => U) {
-  return useAppStore(
-    useShallow(s)
-  )
+  return useAppStore(useShallow(s));
 }
-
 
 function genDemoData() {
   //gen 5 demo collections

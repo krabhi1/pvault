@@ -8,11 +8,15 @@ import { useAppStore } from "@/store/app-store";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { useShallow } from "zustand/react/shallow";
 export default function Page() {
-  const { collections, addCollection } = useAppStore(
+  const { isShowDeleted, collections, addCollection } = useAppStore(
     useShallow((s) => ({
       collections: s.collections,
       addCollection: s.addCollection,
+      isShowDeleted: s.isShowDeleted,
     }))
+  );
+  const filterCollections = collections.filter(
+    (c) => isShowDeleted || !c._isDeleted
   );
   return (
     <div className="w-full h-full fixed flex flex-col">
@@ -22,7 +26,7 @@ export default function Page() {
         {/* center */}
         <div className="flex gap-2  flex-1 flex-col overflow-hidden w-full max-w-screen-sm mb-4">
           <h1 className="text-xl text-gray-600 mt-5">
-            Collections({collections.length})
+            Collections({filterCollections.length})
           </h1>
           <Button
             onClick={() => addCollection("New Collection")}
@@ -32,7 +36,7 @@ export default function Page() {
             New collection
           </Button>
           <ScrollArea className="flex-1 ">
-            <CollectionListView collections={collections} />
+            <CollectionListView collections={filterCollections} />
           </ScrollArea>
         </div>
       </div>

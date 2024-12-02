@@ -18,15 +18,13 @@ export default function CollectionListView({
       type="multiple"
       className={cn("w-full gap-2 grid grid-cols-1 ", className)} //md:grid-cols-2
     >
-      {collections
-        .filter((o) => !o._isDeleted)
-        .map((collection) => (
-          <CollectionView
-            className="border border-gray-200 p-2 "
-            key={collection.id}
-            collection={collection}
-          />
-        ))}
+      {collections.map((collection) => (
+        <CollectionView
+          className="border border-gray-200 p-2 "
+          key={collection.id}
+          collection={collection}
+        />
+      ))}
     </Accordion>
   );
 }

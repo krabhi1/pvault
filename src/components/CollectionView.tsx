@@ -35,19 +35,25 @@ export default function CollectionView({
   collection,
   className,
 }: CollectionViewProps) {
-  const { addItem, deleteCollection, updateCollection } = useAppStore(
-    useShallow((s) => ({
-      addItem: s.addItem,
-      deleteCollection: s.deleteCollection,
-      updateCollection: s.updateCollection,
-    }))
-  );
+  const { addItem, deleteCollection, updateCollection, isShowDeleted } =
+    useAppStore(
+      useShallow((s) => ({
+        addItem: s.addItem,
+        deleteCollection: s.deleteCollection,
+        updateCollection: s.updateCollection,
+        isShowDeleted: s.isShowDeleted,
+      }))
+    );
   const { isConfirmDelete } = useShallowAppStore((s) => ({
     isConfirmDelete: s.isConfirmDelete,
   }));
   const [isCollDeleteDialogOpen, setIsCollDeleteDialogOpen] = useState(false);
   const status = getCollectionStatus(collection);
   const statusColor = statusToColor(status);
+
+  const items = collection.items.filter(
+    (item) => isShowDeleted || !item._isDeleted
+  );
 
   return (
     <AccordionItem className={cn("rounded", className)} value={collection.id}>
@@ -81,11 +87,9 @@ export default function CollectionView({
         </div>
       </AccordionHeader>
       <AccordionContent className="space-y-2 p-1">
-        {collection.items
-          .filter((o) => !o._isDeleted)
-          .map((item) => (
-            <RecordView cid={collection.id} key={item.id} item={item} />
-          ))}
+        {items.map((item) => (
+          <RecordView cid={collection.id} key={item.id} item={item} />
+        ))}
         <Button
           onClick={() => addItem(collection.id, "key", "value")}
           variant={"secondary"}
