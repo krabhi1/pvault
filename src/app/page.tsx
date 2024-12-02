@@ -1,9 +1,13 @@
 "use client";
 import CollectionListView from "@/components/CollectionListView";
 import Header from "@/components/Header";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { useAppStore } from "@/store/app-store";
+import { PlusIcon } from "@radix-ui/react-icons";
 import { useShallow } from "zustand/react/shallow";
-export default function () {
+export default function Page() {
   const { collections, addCollection } = useAppStore(
     useShallow((s) => ({
       collections: s.collections,
@@ -11,18 +15,26 @@ export default function () {
     }))
   );
   return (
-    <div className="p-4 ">
+    <div className="w-full h-full fixed flex flex-col">
       <Header />
-      <div className="w-full border-b mt-2"></div>
-      <div className="max-w-screen-sm m-auto">
-        <h1 className="text-xl text-gray-600 mt-5">
-          Collections({collections.length})
-        </h1>
-        <CollectionListView
-          onAddCollection={() => addCollection("New Collection")}
-          className="mt-2"
-          collections={collections}
-        />
+      <Separator orientation="horizontal" className="my-2 mx-2 w-auto" />
+      <div className="flex flex-1 flex-col items-center overflow-hidden px-6">
+        {/* center */}
+        <div className="flex gap-2  flex-1 flex-col overflow-hidden w-full max-w-screen-sm mb-4">
+          <h1 className="text-xl text-gray-600 mt-5">
+            Collections({collections.length})
+          </h1>
+          <Button
+            onClick={() => addCollection("New Collection")}
+            variant={"secondary"}
+          >
+            <PlusIcon />
+            New collection
+          </Button>
+          <ScrollArea className="flex-1 ">
+            <CollectionListView collections={collections} />
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );

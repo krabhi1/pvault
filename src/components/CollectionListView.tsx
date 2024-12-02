@@ -8,12 +8,10 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { Card, CardContent } from "./ui/card";
 export type CollectionListViewProps = ReactProps<{
   collections: Collection[];
-  onAddCollection?: () => void;
 }>;
 export default function CollectionListView({
   collections,
   className,
-  onAddCollection,
 }: CollectionListViewProps) {
   return (
     <Accordion
@@ -29,10 +27,6 @@ export default function CollectionListView({
             collection={collection}
           />
         ))}
-      <Button onClick={() => onAddCollection?.()} variant={"secondary"}>
-        <PlusIcon />
-        New collection
-      </Button>
     </Accordion>
   );
 }

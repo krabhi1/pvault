@@ -22,7 +22,7 @@ export default function () {
       setIsAutoSaveOn: s.setIsAutoSaveOn,
     }));
   return (
-    <div className="h-12 flex justify-between w-full items-center">
+    <div className="h-12 flex justify-between mx-2  items-center ">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
       <div className="flex gap-2 items-center">
         <Button variant="destructive">Logout</Button>
