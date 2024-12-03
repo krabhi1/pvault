@@ -46,7 +46,10 @@ async function deriveKey(
 }
 
 // Encrypt data function
-async function encryptData(password: string, data: string): Promise<string> {
+export async function encryptData(
+  password: string,
+  data: string
+): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(16)); // Generate random salt
   const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate random IV (12 bytes for AES-GCM)
   const key = await deriveKey(password, salt);
@@ -83,10 +86,7 @@ async function encryptData(password: string, data: string): Promise<string> {
 }
 
 // Decrypt data function
-async function decryptData(
-  password: string,
-  encryptedString: string
-): Promise<string | null> {
+export async function decryptData(password: string, encryptedString: string) {
   const parts = encryptedString.split("|");
 
   if (parts.length !== 5 || parts[0] !== "v1") {
@@ -107,23 +107,18 @@ async function decryptData(
   cipherTextWithTag.set(encryptedData);
   cipherTextWithTag.set(authTag, encryptedData.length);
 
-  try {
-    // Decrypt the data using AES-GCM
-    const decryptedData = await crypto.subtle.decrypt(
-      {
-        name: "AES-GCM",
-        iv: iv,
-      },
-      key,
-      cipherTextWithTag
-    );
+  // Decrypt the data using AES-GCM
+  const decryptedData = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv: iv,
+    },
+    key,
+    cipherTextWithTag
+  );
 
-    const decoder = new TextDecoder();
-    return decoder.decode(decryptedData);
-  } catch (e) {
-    console.error("Decryption failed:", e);
-    return null;
-  }
+  const decoder = new TextDecoder();
+  return decoder.decode(decryptedData);
 }
 
 // Example usage
