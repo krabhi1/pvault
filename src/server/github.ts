@@ -3,6 +3,7 @@ import { env } from "./env";
 import axios from "axios";
 import { HTTPException } from "hono/http-exception";
 import { StatusCode } from "hono/utils/http-status";
+import { downloadFile } from "./utils";
 
 const octokit = new Octokit({
   auth: env.githubToken,
@@ -76,4 +77,13 @@ export async function getFiles() {
     } as GistFile;
   });
   return files;
+}
+
+export async function getFileContent(name: string) {
+  const files = await getFiles();
+  const file = files.find((file) => file.name == name);
+  if (!file) {
+    throw new HTTPException(404, { message: "File not found" });
+  }
+  return downloadFile(file.url);
 }

@@ -1,19 +1,18 @@
-import { downloadFile, makeResponse, handleBasicAuth } from "@/server/utils";
+import {
+  downloadFile,
+  makeResponse,
+  handleBasicAuth,
+  zHttpExceptionHook,
+  verifyUser,
+} from "@/server/utils";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { decrypt, encrypt } from "@/server/crypt";
-import { upsert, getFiles, remove } from "@/server/github";
+import { upsert, getFiles, remove, getFileContent } from "@/server/github";
+import { env } from "@/server/env";
 
-function zHttpExceptionHook(parsed: any, c: any) {
-  if (!parsed.success) {
-    throw new HTTPException(400, {
-      message: "Invalid input",
-      cause: parsed.error,
-    });
-  }
-}
 type Env = {
   Variables: {
     authUser?: {
@@ -52,7 +51,9 @@ const app = new Hono<Env>()
       const data = JSON.stringify({
         collections: [],
       });
-      const encryptedData = encrypt(data, password);
+      let encryptedData = encrypt(data, password);
+      // encrypt with server key
+      encryptedData = encrypt(encryptedData, env.dataEncryptionKey);
       //create file for user
       await upsert(username, encryptedData);
 
@@ -71,18 +72,7 @@ const app = new Hono<Env>()
     ),
     async (c) => {
       const { username, password } = c.req.valid("json");
-      const files = await getFiles();
-      const file = files.find((file) => file.name == username);
-      if (!file) {
-        throw new HTTPException(400, { message: "Username not exist" });
-      }
-      //check password match
-      const content = await downloadFile(file.url);
-      try {
-        decrypt(content, password);
-      } catch (error) {
-        throw new HTTPException(400, { message: "Incorrect password" });
-      }
+      await verifyUser(username, password);
       return makeResponse(c, { data: "Signin successfully" });
     }
   )
@@ -95,3 +85,5 @@ const app = new Hono<Env>()
   });
 
 export default app;
+
+export type UserType = typeof app;

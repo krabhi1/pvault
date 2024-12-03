@@ -2,9 +2,10 @@ import { HTTPException } from "hono/http-exception";
 import { Context } from "hono";
 import { StatusCode } from "hono/utils/http-status";
 import axios from "axios";
-import { getFiles } from "./github";
+import { getFileContent, getFiles } from "./github";
 import { decrypt } from "./crypt";
 import { basicAuth } from "hono/basic-auth";
+import { env } from "./env";
 
 // export async function isUserExist(name: string) {
 //   try {
@@ -22,10 +23,10 @@ import { basicAuth } from "hono/basic-auth";
 //   }
 // }
 
-export function makeResponse(
+export function makeResponse<T = any>(
   ctx: Context,
   data: {
-    data?: any;
+    data?: T;
     error?: {
       message: string;
       cause?: any;
@@ -67,18 +68,28 @@ export async function downloadFile(url: string) {
   return result.data as string;
 }
 
-async function verifyUser(username: string, password: string) {
-  const files = await getFiles();
-  const file = files.find((file) => file.name == username);
-  if (!file) {
-    throw new HTTPException(401, { message: "Username not exist" });
-  }
-  const content = await downloadFile(file.url);
+export async function verifyUser(username: string, password: string) {
+  let data: string;
   try {
-    decrypt(content, password);
+    data = await getFileContent(username);
+    //decrypt it with server key
+    data = decrypt(data, env.dataEncryptionKey);
+  } catch (error) {
+    if (error instanceof HTTPException) {
+      if (error.status == 404)
+        throw new HTTPException(400, { message: "Username not exist" });
+    }
+    throw error;
+  }
+  try {
+    console.log(data, password);
+    decrypt(data, password);
   } catch (error) {
     //TODO check if really password is wrong by check the error
-    throw new HTTPException(401, { message: "Incorrect password" });
+    console.log(error);
+    throw new HTTPException(401, {
+      message: "Incorrect password",
+    });
   }
 }
 
@@ -89,3 +100,12 @@ export const handleBasicAuth = basicAuth({
     return true;
   },
 });
+
+export function zHttpExceptionHook(parsed: any, c: any) {
+  if (!parsed.success) {
+    throw new HTTPException(400, {
+      message: "Invalid input",
+      cause: parsed.error,
+    });
+  }
+}
