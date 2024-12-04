@@ -52,7 +52,7 @@ export default function CollectionView({
   const statusColor = statusToColor(status);
 
   const items = collection.items.filter(
-    (item) => isShowDeleted || !item._isDeleted
+    (item) => isShowDeleted || !item.isDeleted
   );
 
   return (

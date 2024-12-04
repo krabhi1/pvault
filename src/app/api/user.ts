@@ -4,6 +4,7 @@ import {
   handleBasicAuth,
   zHttpExceptionHook,
   verifyUser,
+  DEFAULT_DATA,
 } from "@/server/utils";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
@@ -47,11 +48,8 @@ const app = new Hono<Env>()
       if (isExist) {
         throw new HTTPException(409, { message: "Username already exist" });
       }
-      //create default data and encrypt with password
-      const data = JSON.stringify({
-        collections: [],
-      });
-      let encryptedData = encrypt(data, password);
+
+      let encryptedData = encrypt(DEFAULT_DATA, password);
       // encrypt with server key
       encryptedData = encrypt(encryptedData, env.dataEncryptionKey);
       //create file for user

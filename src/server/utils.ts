@@ -109,3 +109,12 @@ export function zHttpExceptionHook(parsed: any, c: any) {
     });
   }
 }
+
+export const DEFAULT_DATA = JSON.stringify({
+  collections: [],
+  // setting
+  isAutoSaveOn: false,
+  isConfirmDelete: true,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});

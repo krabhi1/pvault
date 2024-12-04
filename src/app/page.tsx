@@ -16,7 +16,7 @@ export default function Page() {
     }))
   );
   const filterCollections = collections.filter(
-    (c) => isShowDeleted || !c._isDeleted
+    (c) => isShowDeleted || !c.isDeleted
   );
   return (
     <div className="w-full h-full fixed flex flex-col">

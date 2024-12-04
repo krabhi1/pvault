@@ -11,11 +11,11 @@ export type Collection = {
   createdAt: Date;
   updatedAt: Date;
   //local
-  _isExpanded: boolean;
+  isExpanded: boolean;
   //detect changes
   //_isChanged:boolean //if name or any child changed
   _originalName?: string;
-  _isDeleted: boolean;
+  isDeleted: boolean;
 };
 
 export type CItem = {
@@ -29,7 +29,7 @@ export type CItem = {
   // _isChanged: boolean;
   _originalkey?: string;
   _originalvalue?: string;
-  _isDeleted: boolean;
+  isDeleted: boolean;
 };
 
 type State = {
@@ -37,6 +37,8 @@ type State = {
   isConfirmDelete: boolean;
   isAutoSaveOn: boolean;
   isShowDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };
 type Actions = {
   //collection
@@ -73,8 +75,8 @@ const utilsActions = (
     loadFromJsonString(data) {
       const json = JSON.parse(data) as Collection[];
       const collections = json.map((c) => {
-        c._isDeleted = false;
-        c._isExpanded = false;
+        c.isDeleted = false;
+        c.isExpanded = false;
         return c;
       });
       set((draft) => {
@@ -91,7 +93,7 @@ const utilsActions = (
           //TODO remove unwanted property like _isExpanded
           c.items = c.items.filter(
             (r) =>
-              r._isDeleted ||
+              r.isDeleted ||
               r.key != r._originalkey ||
               r.value != r._originalvalue
           );
@@ -99,7 +101,7 @@ const utilsActions = (
         })
         .filter(
           (c) =>
-            c._isDeleted || c._originalName !== c.name || c.items.length != 0
+            c.isDeleted || c._originalName !== c.name || c.items.length != 0
         );
       return changedCollections;
     },
@@ -116,7 +118,7 @@ const utilsActions = (
           });
           return c;
         });
-        d.collections = d.collections.filter((c) => !c._isDeleted);
+        d.collections = d.collections.filter((c) => !c.isDeleted);
       });
     },
   };
@@ -151,14 +153,16 @@ export const useAppStore = create<State & Actions>()(
     isConfirmDelete: true,
     isAutoSaveOn: true,
     isShowDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     addCollection: (name) => {
       set((state) => {
         state.collections.push({
           id: nanoid(),
           name,
           items: [],
-          _isExpanded: false,
-          _isDeleted: false,
+          isExpanded: false,
+          isDeleted: false,
           updatedAt: new Date(),
           createdAt: new Date(),
         });
@@ -167,10 +171,10 @@ export const useAppStore = create<State & Actions>()(
     deleteCollection: (id) => {
       set((state) => {
         const index = state.collections.findIndex((c) => c.id === id);
-        state.collections[index]._isDeleted = true;
+        state.collections[index].isDeleted = true;
         // make all items deletd
         state.collections[index].items.forEach((item) => {
-          item._isDeleted = true;
+          item.isDeleted = true;
         });
       });
     },
@@ -193,7 +197,7 @@ export const useAppStore = create<State & Actions>()(
             id: nanoid(),
             key,
             value,
-            _isDeleted: false,
+            isDeleted: false,
             updatedAt: new Date(),
             createdAt: new Date(),
           });
@@ -210,7 +214,7 @@ export const useAppStore = create<State & Actions>()(
             (i) => i.id === id
           );
           if (itemIndex != -1) {
-            state.collections[collectionIndex].items[itemIndex]._isDeleted =
+            state.collections[collectionIndex].items[itemIndex].isDeleted =
               true;
           }
         }
