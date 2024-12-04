@@ -15,7 +15,9 @@ export type Collection = {
   //detect changes
   //_isChanged:boolean //if name or any child changed
   _name?: string;
+  _name?: string;
   isDeleted: boolean;
+  _isDeleted?: boolean;
   _isDeleted?: boolean;
 };
 
@@ -61,6 +63,8 @@ type Actions = {
   mergeChanges: () => void;
   getUploadData: () => ServerData;
   getChangeCount: () => number;
+  getUploadData: () => ServerData;
+  getChangeCount: () => number;
   //settings
   setConfirmDelete: (isConfirm: boolean) => void;
   setIsAutoSaveOn: (value: boolean) => void;
@@ -80,9 +84,22 @@ type ServerData = {
   createdAt: Date;
   updatedAt: Date;
 };
+type ServerData = {
+  collections: (Omit<Collection, "_originalName" | "items"> & {
+    items: Omit<CItem, "_originalkey" | "_originalvalue">[];
+  })[];
+  //settings
+  isAutoSaveOn: boolean;
+  isConfirmDelete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
 const utilsActions = (
   set: Setter,
   get: Getter
+): ReturnType<
+  "loadFromJsonString" | "mergeChanges" | "getUploadData" | "getChangeCount"
+> => {
 ): ReturnType<
   "loadFromJsonString" | "mergeChanges" | "getUploadData" | "getChangeCount"
 > => {
@@ -90,7 +107,15 @@ const utilsActions = (
     loadFromJsonString(dataString) {
       const data = JSON.parse(dataString) as ServerData;
 
+    loadFromJsonString(dataString) {
+      const data = JSON.parse(dataString) as ServerData;
+
       set((draft) => {
+        draft.collections = data.collections;
+        draft.isAutoSaveOn = data.isAutoSaveOn;
+        draft.isConfirmDelete = data.isConfirmDelete;
+        draft.createdAt = data.createdAt;
+        draft.updatedAt = data.updatedAt;
         draft.collections = data.collections;
         draft.isAutoSaveOn = data.isAutoSaveOn;
         draft.isConfirmDelete = data.isConfirmDelete;
@@ -140,6 +165,13 @@ const utilsActions = (
       //org = current for all ,remove _deleted
       set((d) => {
         d.collections.map((c) => {
+          if (c._name != c.name) {
+            c._name = c.name;
+            console.log("Collection " + c.name);
+          }
+          if (c._isDeleted != c.isDeleted) {
+            c._isDeleted = c.isDeleted;
+          }
           if (c._name != c.name) {
             c._name = c.name;
             console.log("Collection " + c.name);
