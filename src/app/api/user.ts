@@ -84,4 +84,4 @@ const app = new Hono<Env>()
 
 export default app;
 
-export type UserType = typeof app;
+export type UserRouterType = typeof app;

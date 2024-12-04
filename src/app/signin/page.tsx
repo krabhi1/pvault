@@ -25,6 +25,7 @@ import { useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { isDev } from "@/lib/utils";
 
 const formSchema = z.object({
   username: z.string().min(3).max(50),
@@ -50,7 +51,7 @@ export default function Signin() {
         return data;
       }
       throw new Error(error?.message);
-    },
+    }
   );
 
   useEffect(() => {

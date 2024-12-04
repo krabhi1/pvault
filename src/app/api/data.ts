@@ -47,3 +47,4 @@ const app = new Hono<Env>()
   });
 
 export default app;
+export type DataRouterType = typeof app;

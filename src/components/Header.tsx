@@ -21,6 +21,7 @@ export default function () {
     setIsAutoSaveOn,
     isShowDeleted,
     setIsShowDelete,
+    getCount,
   } = useShallowAppStore((s) => ({
     isConfirmDelete: s.isConfirmDelete,
     setConfirmDelete: s.setConfirmDelete,
@@ -28,13 +29,13 @@ export default function () {
     setIsAutoSaveOn: s.setIsAutoSaveOn,
     isShowDeleted: s.isShowDeleted,
     setIsShowDelete: s.setIsShowDelete,
+    getCount: s.getChangeCount,
   }));
   return (
     <div className="h-12 flex justify-between mx-2  items-center ">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
       <div className="flex gap-2 items-center">
-        <Button variant="destructive">Logout</Button>
-        <Button>Update(0)</Button>
+        <Button>Update({getCount()})</Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger>

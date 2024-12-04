@@ -317,45 +317,7 @@ function genDemoData() {
     }
   });
 }
-genDemoData();
-
-// export const useCollection = (id: string) => {
-//   const { collection } = useAppStore(
-//     useShallow((state) => ({
-//       collection: state.collections.find((c) => c.id === id),
-//     })),
-//   );
-//   if (!collection) throw new Error(`Collection with id ${id} not found`);
-//   return {
-//     id: collection.id,
-//     name: collection.name,
-//     items: collection.items,
-//     isExpanded: collection._isExpanded,
-//     isDeleted: collection._isDeleted,
-//     isNew: collection._isNew,
-//     isChanged: collection._originalName !== collection.name,
-//   };
-// };
-// export type Collection = ReturnType<typeof useCollection>;
-
-// export const useItem = (collectionId: string, id: string) => {
-//   const { item } = useAppStore(
-//     useShallow((state) => ({
-//       item: state.getItem(collectionId, id),
-//     })),
-//   );
-//   if (!item) throw new Error(`Item with id ${id} not found`);
-//   return {
-//     key: item.key,
-//     value: item.value,
-//     isDeleted: item._isDeleted,
-//     isNew: item._isNew,
-//     isChanged:
-//       item._originalkey !== item.key || item._originalvalue !== item.value,
-//     id: item.id,
-//   };
-// };
-// export type Item = ReturnType<typeof useItem>;
+// genDemoData();
 
 if (typeof window !== "undefined") {
   //@ts-ignore
