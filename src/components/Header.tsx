@@ -13,7 +13,7 @@ import { Checkbox } from "./ui/checkbox";
 import { useShallowAppStore } from "@/store/app-store";
 
 export default function () {
-  const { username } = useAuth();
+  const { username, signout } = useAuth();
   const {
     isConfirmDelete,
     setConfirmDelete,
@@ -71,7 +71,7 @@ export default function () {
               />
             </DropdownMenuItem>
             <DropdownMenuItem>Export</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem onClick={signout} className="text-destructive">
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -12,7 +12,7 @@ export type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 type AuthContextProviderProps = React.PropsWithChildren<{}>;
 export function AuthProvider({ children }: AuthContextProviderProps) {
-  const unprotectedPaths = ["/signin", "/signout", "/crypt"];
+  const unprotectedPaths = ["/signin", "/signup", "/crypt"];
   const [authData, setAuthData] = useImmer<AuthContextType>({
     username: "",
     password: "",
