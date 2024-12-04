@@ -15,9 +15,7 @@ export type Collection = {
   //detect changes
   //_isChanged:boolean //if name or any child changed
   _name?: string;
-  _name?: string;
   isDeleted: boolean;
-  _isDeleted?: boolean;
   _isDeleted?: boolean;
 };
 
@@ -63,8 +61,6 @@ type Actions = {
   mergeChanges: () => void;
   getUploadData: () => ServerData;
   getChangeCount: () => number;
-  getUploadData: () => ServerData;
-  getChangeCount: () => number;
   //settings
   setConfirmDelete: (isConfirm: boolean) => void;
   setIsAutoSaveOn: (value: boolean) => void;
@@ -74,16 +70,7 @@ type Actions = {
 type Setter = (updater: (draft: State & Actions) => any | void) => void;
 type Getter = () => State & Actions;
 type ReturnType<T extends keyof Actions> = Pick<Actions, T>;
-type ServerData = {
-  collections: (Omit<Collection, "_originalName" | "items"> & {
-    items: Omit<CItem, "_originalkey" | "_originalvalue">[];
-  })[];
-  //settings
-  isAutoSaveOn: boolean;
-  isConfirmDelete: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+
 type ServerData = {
   collections: (Omit<Collection, "_originalName" | "items"> & {
     items: Omit<CItem, "_originalkey" | "_originalvalue">[];
@@ -100,13 +87,7 @@ const utilsActions = (
 ): ReturnType<
   "loadFromJsonString" | "mergeChanges" | "getUploadData" | "getChangeCount"
 > => {
-): ReturnType<
-  "loadFromJsonString" | "mergeChanges" | "getUploadData" | "getChangeCount"
-> => {
   return {
-    loadFromJsonString(dataString) {
-      const data = JSON.parse(dataString) as ServerData;
-
     loadFromJsonString(dataString) {
       const data = JSON.parse(dataString) as ServerData;
 

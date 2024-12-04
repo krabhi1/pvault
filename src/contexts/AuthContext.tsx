@@ -6,21 +6,22 @@ export type AuthContextType = {
   username: string;
   password: string;
   signout: () => void;
-  signinOrsignup: (name: string) => void;
+  signinOrsignup: (name: string, password: string) => void;
   isSignin: boolean;
 };
 const AuthContext = createContext<AuthContextType | null>(null);
 type AuthContextProviderProps = React.PropsWithChildren<{}>;
 export function AuthProvider({ children }: AuthContextProviderProps) {
-  const unprotectedPaths = ["/signin", "/signout"];
+  const unprotectedPaths = ["/signin", "/signout", "/crypt"];
   const [authData, setAuthData] = useImmer<AuthContextType>({
-    username: "abhi",
-    password: "123",
-    isSignin: true,
-    signinOrsignup(name) {
+    username: "",
+    password: "",
+    isSignin: false,
+    signinOrsignup(name, password) {
       setAuthData((draft) => {
         draft.isSignin = true;
         draft.username = name;
+        draft.password = password;
       });
     },
     signout() {
