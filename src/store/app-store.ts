@@ -14,8 +14,9 @@ export type Collection = {
   isExpanded: boolean;
   //detect changes
   //_isChanged:boolean //if name or any child changed
-  _originalName?: string;
+  _name?: string;
   isDeleted: boolean;
+  _isDeleted?: boolean;
 };
 
 export type CItem = {
@@ -27,8 +28,9 @@ export type CItem = {
   //local
   //detect changes
   // _isChanged: boolean;
-  _originalkey?: string;
-  _originalvalue?: string;
+  _key?: string;
+  _value?: string;
+  _isDeleted?: boolean;
   isDeleted: boolean;
 };
 
@@ -57,7 +59,8 @@ type Actions = {
   //utils
   loadFromJsonString: (data: string) => void;
   mergeChanges: () => void;
-  getUploadData: () => Collection[];
+  getUploadData: () => ServerData;
+  getChangeCount: () => number;
   //settings
   setConfirmDelete: (isConfirm: boolean) => void;
   setIsAutoSaveOn: (value: boolean) => void;
@@ -67,58 +70,99 @@ type Actions = {
 type Setter = (updater: (draft: State & Actions) => any | void) => void;
 type Getter = () => State & Actions;
 type ReturnType<T extends keyof Actions> = Pick<Actions, T>;
+type ServerData = {
+  collections: (Omit<Collection, "_originalName" | "items"> & {
+    items: Omit<CItem, "_originalkey" | "_originalvalue">[];
+  })[];
+  //settings
+  isAutoSaveOn: boolean;
+  isConfirmDelete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
 const utilsActions = (
   set: Setter,
   get: Getter
-): ReturnType<"loadFromJsonString" | "mergeChanges" | "getUploadData"> => {
+): ReturnType<
+  "loadFromJsonString" | "mergeChanges" | "getUploadData" | "getChangeCount"
+> => {
   return {
-    loadFromJsonString(data) {
-      const json = JSON.parse(data) as Collection[];
-      const collections = json.map((c) => {
-        c.isDeleted = false;
-        c.isExpanded = false;
-        return c;
-      });
+    loadFromJsonString(dataString) {
+      const data = JSON.parse(dataString) as ServerData;
+
       set((draft) => {
-        draft.collections = collections;
+        draft.collections = data.collections;
+        draft.isAutoSaveOn = data.isAutoSaveOn;
+        draft.isConfirmDelete = data.isConfirmDelete;
+        draft.createdAt = data.createdAt;
+        draft.updatedAt = data.updatedAt;
       });
     },
     getUploadData: () => {
-      //get all changed data
-      //TODO remove (new and deleted)
-      const changedCollections = (
-        JSON.parse(JSON.stringify(get().collections)) as Collection[]
-      )
-        .map((c) => {
-          //TODO remove unwanted property like _isExpanded
-          c.items = c.items.filter(
-            (r) =>
-              r.isDeleted ||
-              r.key != r._originalkey ||
-              r.value != r._originalvalue
-          );
-          return c;
+      const {
+        collections,
+        isAutoSaveOn,
+        isConfirmDelete,
+        createdAt,
+        updatedAt,
+      } = get();
+      // remove local fields
+      const stateCopy = JSON.parse(
+        JSON.stringify({
+          collections: collections.map(({ _name, _isDeleted, ...c }) => ({
+            ...c,
+            items: c.items.map(({ _key, _value, _isDeleted, ...item }) => ({
+              ...item,
+            })),
+          })),
+          isAutoSaveOn,
+          isConfirmDelete,
+          createdAt,
+          updatedAt,
         })
-        .filter(
-          (c) =>
-            c.isDeleted || c._originalName !== c.name || c.items.length != 0
-        );
-      return changedCollections;
+      );
+      return stateCopy as ServerData;
+    },
+    getChangeCount() {
+      let count = 0;
+      get().collections.forEach((c) => {
+        if (c._name != c.name) count++;
+        if (c._isDeleted != c.isDeleted) count++;
+        c.items.forEach((r) => {
+          if (r._key != r.key) count++;
+          if (r._value != r.value) count++;
+          if (r.isDeleted != r._isDeleted) count++;
+        });
+      });
+      return count;
     },
     mergeChanges: () => {
       //org = current for all ,remove _deleted
       set((d) => {
         d.collections.map((c) => {
-          if (c._originalName != c.name) c._originalName = c.name;
-          console.log(c._originalName, c.name);
+          if (c._name != c.name) {
+            c._name = c.name;
+            console.log("Collection " + c.name);
+          }
+          if (c._isDeleted != c.isDeleted) {
+            c._isDeleted = c.isDeleted;
+          }
           c.items = c.items.map((r) => {
-            if (r._originalkey != r.key) r._originalkey = r.key;
-            if (r._originalvalue != r.value) r._originalvalue = r.value;
+            if (r._key != r.key) {
+              r._key = r.key;
+              console.log(`Key ${c.name}:${r.key}`);
+            }
+            if (r._value != r.value) {
+              r._value = r.value;
+              console.log(`Value ${c.name}:${r.value}`);
+            }
+            if (r.isDeleted != r._isDeleted) {
+              r._isDeleted = r.isDeleted;
+            }
             return r;
           });
           return c;
         });
-        d.collections = d.collections.filter((c) => !c.isDeleted);
       });
     },
   };
@@ -300,8 +344,10 @@ genDemoData();
 // };
 // export type Item = ReturnType<typeof useItem>;
 
-///@ts-ignore
-// window.store = useAppStore.getState;
+if (typeof window !== "undefined") {
+  //@ts-ignore
+  window.store = useAppStore.getState;
+}
 
 // useAppStore.subscribe((s) => {
 //   console.log(s.collections);
