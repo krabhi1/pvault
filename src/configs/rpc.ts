@@ -5,8 +5,8 @@ import { DataRouterType } from "@/app/api/data";
 import { useCallback, useEffect, useState } from "react";
 import { StatusCode } from "hono/utils/http-status";
 
-export const userRpc = hc<UserRouterType>("http://localhost:3000/api/user");
-export const dataRpc = hc<DataRouterType>("http://localhost:3000/api/data");
+export const userRpc = hc<UserRouterType>("/api/user");
+export const dataRpc = hc<DataRouterType>("/api/data");
 
 type Config<T> = {
   initial?: {

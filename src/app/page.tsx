@@ -13,7 +13,6 @@ import { useAppStore } from "@/store/app-store";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { ClientRequestOptions, InferRequestType } from "hono/client";
 import { Loader2Icon } from "lucide-react";
-import router from "next/router";
 import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 export default function Page() {
@@ -97,12 +96,11 @@ export default function Page() {
             <CollectionListView collections={filterCollections} />
           </ScrollArea>
         </div>
-        {isUploading ||
-          (isLoading && (
-            <div className="text-black bg-white opacity-70 flex font-bold items-center justify-center absolute top-0 left-0 w-full h-full  bg-transparent">
-              <Loader2Icon className="animate-spin" />
-            </div>
-          ))}
+        {(isLoading || isUploading) && (
+          <div className="text-black bg-white opacity-70 flex font-bold items-center justify-center absolute top-0 left-0 w-full h-full  bg-transparent">
+            <Loader2Icon className="animate-spin" />
+          </div>
+        )}
       </div>
     </div>
   );

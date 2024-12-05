@@ -33,7 +33,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "vitest.config.ts",
-    "next.config.js"
+    "next.config.js",
+    "src/server/crypt.test.mts"
   ],
   "exclude": [
     "node_modules"
