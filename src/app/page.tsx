@@ -12,8 +12,9 @@ import { decryptData } from "@/lib/crypt";
 import { useAppStore } from "@/store/app-store";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { ClientRequestOptions, InferRequestType } from "hono/client";
+import { Loader2Icon } from "lucide-react";
 import router from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 export default function Page() {
   const { isShowDeleted, collections, addCollection, load, merge } =
@@ -69,21 +70,19 @@ export default function Page() {
     }
   }, [data, error, load]);
 
+  const [isUploading, setIsUploading] = useState(false);
+
   const filterCollections = collections.filter(
     (c) => isShowDeleted || !c.isDeleted
   );
 
-  if (isLoading) {
-    return "Loading...";
-  }
-
   return (
     <div className="w-full h-full fixed flex flex-col">
-      <Header />
+      <Header onUpload={setIsUploading} />
       <Separator orientation="horizontal" className="my-2 mx-2 w-auto" />
-      <div className="flex flex-1 flex-col items-center overflow-hidden px-6">
+      <div className="relative flex flex-1 flex-col items-center overflow-hidden px-6">
         {/* center */}
-        <div className="flex gap-2  flex-1 flex-col overflow-hidden w-full max-w-screen-sm mb-4">
+        <div className=" flex gap-2  flex-1 flex-col overflow-hidden w-full max-w-screen-sm mb-4">
           <h1 className="text-xl text-gray-600 mt-5">
             Collections({filterCollections.length})
           </h1>
@@ -98,6 +97,12 @@ export default function Page() {
             <CollectionListView collections={filterCollections} />
           </ScrollArea>
         </div>
+        {isUploading ||
+          (isLoading && (
+            <div className="text-black bg-white opacity-70 flex font-bold items-center justify-center absolute top-0 left-0 w-full h-full  bg-transparent">
+              <Loader2Icon className="animate-spin" />
+            </div>
+          ))}
       </div>
     </div>
   );

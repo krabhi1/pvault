@@ -15,7 +15,12 @@ import { dataRpc, useRpc } from "@/configs/rpc";
 import { encryptData } from "@/lib/crypt";
 import { useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
-export default function () {
+import { Loader2 } from "lucide-react";
+
+type HeaderProps = {
+  onUpload?: (value: boolean) => void;
+};
+export default function Header({ onUpload }: HeaderProps) {
   const { username, password, signout } = useAuth();
   const {
     isConfirmDelete,
@@ -65,16 +70,18 @@ export default function () {
       });
     }
   }, [data, error]);
+  useEffect(() => {
+    onUpload?.(isLoading);
+  }, [isLoading, onUpload]);
   // optimise it by calculate after some idle time
   const count = getCount();
-  if (isLoading) {
-    return "Saving...";
-  }
+
   return (
     <div className="h-12 flex justify-between mx-2  items-center ">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
       <div className="flex gap-2 items-center">
         <Button onClick={update} disabled={count == 0}>
+          {isLoading && <Loader2 className="animate-spin" />}
           Update({count})
         </Button>
 

@@ -28,7 +28,7 @@
     "clsx": "^2.1.1",
     "hono": "^4.6.12",
     "immer": "^10.1.1",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.465.0",
     "nanoid": "^5.0.8",
     "next": "14.2.5",
     "octokit": "^4.0.2",
