@@ -56,10 +56,11 @@ export default function Signin() {
 
   useEffect(() => {
     if (data) {
-      toast({
-        title: "Success",
-        description: data,
-      });
+      // toast({
+      //   title: "Success",
+      //   description: data,
+      //   duration: 2000,
+      // });
       // redirect to home
       const { password, username } = form.getValues();
       signinOrsignup(username, password);
@@ -69,6 +70,8 @@ export default function Signin() {
       toast({
         title: "Error",
         description: error.message,
+        duration: 3000,
+        variant: "destructive",
       });
     }
   }, [data, error]);

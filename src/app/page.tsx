@@ -16,14 +16,16 @@ import router from "next/router";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 export default function Page() {
-  const { isShowDeleted, collections, addCollection, load } = useAppStore(
-    useShallow((s) => ({
-      collections: s.collections,
-      addCollection: s.addCollection,
-      isShowDeleted: s.isShowDeleted,
-      load: s.loadFromJsonString,
-    }))
-  );
+  const { isShowDeleted, collections, addCollection, load, merge } =
+    useAppStore(
+      useShallow((s) => ({
+        collections: s.collections,
+        addCollection: s.addCollection,
+        isShowDeleted: s.isShowDeleted,
+        load: s.loadFromJsonString,
+        merge: s.mergeChanges,
+      }))
+    );
   const { username, password } = useAuth();
   const { data, isLoading, error } = usePromise(
     async (
@@ -55,6 +57,8 @@ export default function Page() {
         const decrypted = await decryptData(password, data);
         console.log(decrypted);
         load(decrypted);
+        // merge changes
+        merge();
       })();
     }
     if (error) {

@@ -54,10 +54,10 @@ export default function Signup() {
 
   useEffect(() => {
     if (data) {
-      toast({
-        title: "Success",
-        description: data,
-      });
+      // toast({
+      //   title: "Success",
+      //   description: data,
+      // });
       // redirect to home
       const { password, username } = form.getValues();
       signinOrsignup(username, password);

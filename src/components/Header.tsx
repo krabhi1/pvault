@@ -10,10 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "./ui/checkbox";
-import { useShallowAppStore } from "@/store/app-store";
-
+import { useAppStore, useShallowAppStore } from "@/store/app-store";
+import { dataRpc, useRpc } from "@/configs/rpc";
+import { encryptData } from "@/lib/crypt";
+import { useEffect } from "react";
+import { toast } from "@/hooks/use-toast";
 export default function () {
-  const { username, signout } = useAuth();
+  const { username, password, signout } = useAuth();
   const {
     isConfirmDelete,
     setConfirmDelete,
@@ -31,11 +34,49 @@ export default function () {
     setIsShowDelete: s.setIsShowDelete,
     getCount: s.getChangeCount,
   }));
+  const { data, isLoading, error, mutate } = useRpc(dataRpc.index.$put);
+
+  async function update() {
+    mutate(
+      {
+        json: {
+          encryptedData: await encryptData(
+            password,
+            JSON.stringify(useAppStore.getState().getUploadData())
+          ),
+        },
+      },
+      {
+        headers: {
+          Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+        },
+      }
+    );
+  }
+  useEffect(() => {
+    if (data) {
+      useAppStore.getState().mergeChanges();
+    }
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        duration: 3000,
+      });
+    }
+  }, [data, error]);
+  // optimise it by calculate after some idle time
+  const count = getCount();
+  if (isLoading) {
+    return "Saving...";
+  }
   return (
     <div className="h-12 flex justify-between mx-2  items-center ">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
       <div className="flex gap-2 items-center">
-        <Button>Update({getCount()})</Button>
+        <Button onClick={update} disabled={count == 0}>
+          Update({count})
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger>
