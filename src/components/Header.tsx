@@ -13,9 +13,10 @@ import { Checkbox } from "./ui/checkbox";
 import { useAppStore, useShallowAppStore } from "@/store/app-store";
 import { dataRpc, useRpc } from "@/configs/rpc";
 import { encryptData } from "@/lib/crypt";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useCountUp } from "react-countup";
 
 type HeaderProps = {
   onUpload?: (value: boolean) => void;
@@ -40,6 +41,28 @@ export default function Header({ onUpload }: HeaderProps) {
     getCount: s.getChangeCount,
   }));
   const { data, isLoading, error, mutate } = useRpc(dataRpc.index.$put);
+
+  const totalTime = 5 * 60;
+  const timerRef = useRef(null);
+  const format = useCallback((value: number) => {
+    const minutes = Math.floor(value / 60);
+    const seconds = value % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }, []);
+  const { start, pauseResume, reset } = useCountUp({
+    ref: timerRef,
+    start: totalTime,
+    end: 0,
+    duration: totalTime,
+    onReset: () => console.log("Resetted!"),
+    onUpdate: () => console.log("Updated!"),
+    onPauseResume: () => console.log("Paused or resumed!"),
+    onStart: ({ pauseResume }) => console.log(pauseResume),
+    onEnd: ({ pauseResume }) => console.log(pauseResume),
+    formattingFn: format,
+    useEasing: false,
+    startOnMount: true,
+  });
 
   async function update() {
     mutate(
@@ -79,6 +102,16 @@ export default function Header({ onUpload }: HeaderProps) {
   return (
     <div className="h-12 flex justify-between mx-2  items-center ">
       <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
+      <div>
+        <span
+          onClick={() => {
+            reset();
+            start();
+          }}
+          ref={timerRef}
+          className="p-2 text-green-500"
+        ></span>
+      </div>
       <div className="flex gap-2 items-center">
         <Button onClick={update} disabled={count == 0}>
           {isLoading && <Loader2 className="animate-spin" />}
