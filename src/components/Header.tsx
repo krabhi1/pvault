@@ -13,11 +13,11 @@ import { Checkbox } from "./ui/checkbox";
 import { useAppStore, useShallowAppStore } from "@/store/app-store";
 import { dataRpc, useRpc } from "@/configs/rpc";
 import { encryptData } from "@/lib/crypt";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useCountUp } from "react-countup";
-import { useNetworkState } from "react-use";
+import { useNetworkState, useIdle } from "react-use";
 import NetworkStatus from "./NetworkStatus";
 
 type HeaderProps = {
@@ -100,8 +100,9 @@ export default function Header({ onUpload }: HeaderProps) {
     onUpload?.(isLoading);
   }, [isLoading, onUpload]);
 
-  // optimise it by calculate after some idle time
-  const count = getCount();
+  const countIdle = useIdle(1000);
+  const count = useMemo(getCount, [countIdle]);
+
   useEffect(() => {
     const callback = (event: Event) => {
       if (count != 0) {
