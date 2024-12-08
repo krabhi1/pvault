@@ -99,8 +99,20 @@ export default function Header({ onUpload }: HeaderProps) {
   useEffect(() => {
     onUpload?.(isLoading);
   }, [isLoading, onUpload]);
+
   // optimise it by calculate after some idle time
   const count = getCount();
+  useEffect(() => {
+    const callback = (event: Event) => {
+      if (count != 0) {
+        event.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", callback);
+    return () => {
+      window.removeEventListener("beforeunload", callback);
+    };
+  }, [count]);
 
   return (
     <div className="h-12 flex justify-between mx-2  items-center ">
