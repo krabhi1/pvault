@@ -25,16 +25,13 @@ import EditText from "./EditText";
 import RecordView from "./RecordView";
 import { Button, buttonVariants } from "./ui/button";
 import { useShallow } from "zustand/react/shallow";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 export type CollectionViewProps = ReactProps<{
   collection: Collection;
 }>;
 
-export default function CollectionView({
-  collection,
-  className,
-}: CollectionViewProps) {
+function CollectionView({ collection, className }: CollectionViewProps) {
   const { addItem, deleteCollection, updateCollection, isShowDeleted } =
     useAppStore(
       useShallow((s) => ({
@@ -126,6 +123,8 @@ export default function CollectionView({
     </AccordionItem>
   );
 }
+
+export default memo(CollectionView);
 
 // export function ConfirmCollectionDeleteDialog(props: { onDelete: () => void,open }) {
 //   const [open, isOpen] = useState(true);

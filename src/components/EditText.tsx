@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,7 @@ export type EditTextProps = {
   isMultiline?: boolean;
   className?: string;
 };
-export default function EditText({
+function EditText({
   className,
   value,
   onChange,
@@ -91,3 +91,5 @@ export default function EditText({
   //   </span>
   // );
 }
+
+export default memo(EditText);

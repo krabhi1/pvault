@@ -13,7 +13,7 @@ import { Checkbox } from "./ui/checkbox";
 import { useAppStore, useShallowAppStore } from "@/store/app-store";
 import { dataRpc, useRpc } from "@/configs/rpc";
 import { encryptData } from "@/lib/crypt";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useCountUp } from "react-countup";
@@ -23,7 +23,7 @@ import NetworkStatus from "./NetworkStatus";
 type HeaderProps = {
   onUpload?: (value: boolean) => void;
 };
-export default function Header({ onUpload }: HeaderProps) {
+function Header({ onUpload }: HeaderProps) {
   const { username, password, signout } = useAuth();
   const {
     isConfirmDelete,
@@ -100,7 +100,7 @@ export default function Header({ onUpload }: HeaderProps) {
     onUpload?.(isLoading);
   }, [isLoading, onUpload]);
 
-  const countIdle = useIdle(1000);
+  const countIdle = useIdle(500);
   const count = useMemo(getCount, [countIdle]);
 
   useEffect(() => {
@@ -181,3 +181,5 @@ export default function Header({ onUpload }: HeaderProps) {
     </div>
   );
 }
+
+export default memo(Header);

@@ -6,7 +6,7 @@ import { cn, copyTextToClipboard } from "@/lib/utils";
 import { Button, buttonVariants } from "./ui/button";
 import { useShallow } from "zustand/react/shallow";
 import { getItemStatus, statusToColor } from "./utils";
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +25,7 @@ export type RecordViewProps = {
   className?: string;
   cid: string;
 };
-export default function RecordView({ item, className, cid }: RecordViewProps) {
+function RecordView({ item, className, cid }: RecordViewProps) {
   const { updateItem, deleteItem } = useAppStore(
     useShallow((s) => ({
       updateItem: s.updateItem,
@@ -123,3 +123,4 @@ export default function RecordView({ item, className, cid }: RecordViewProps) {
     </div>
   );
 }
+export default memo(RecordView);
