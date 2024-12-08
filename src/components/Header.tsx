@@ -17,6 +17,8 @@ import { useCallback, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useCountUp } from "react-countup";
+import { useNetworkState } from "react-use";
+import NetworkStatus from "./NetworkStatus";
 
 type HeaderProps = {
   onUpload?: (value: boolean) => void;
@@ -63,6 +65,7 @@ export default function Header({ onUpload }: HeaderProps) {
     useEasing: false,
     startOnMount: true,
   });
+  const network = useNetworkState();
 
   async function update() {
     mutate(
@@ -101,7 +104,10 @@ export default function Header({ onUpload }: HeaderProps) {
 
   return (
     <div className="h-12 flex justify-between mx-2  items-center ">
-      <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
+      <div className="flex gap-2 items-center">
+        <h2 className="text-3xl text-blue-600 font-bold">PVault</h2>
+        <NetworkStatus isOnline={network.online} />
+      </div>
       <div>
         <span
           onClick={() => {
@@ -109,11 +115,11 @@ export default function Header({ onUpload }: HeaderProps) {
             start();
           }}
           ref={timerRef}
-          className="p-2 text-green-500"
+          className="p-2 text-green-600"
         ></span>
       </div>
       <div className="flex gap-2 items-center">
-        <Button onClick={update} disabled={count == 0}>
+        <Button onClick={update} disabled={count == 0 || !network.online}>
           {isLoading && <Loader2 className="animate-spin" />}
           Update({count})
         </Button>
