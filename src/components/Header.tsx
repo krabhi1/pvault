@@ -100,7 +100,7 @@ function Header({ onUpload }: HeaderProps) {
     onUpload?.(isLoading);
   }, [isLoading, onUpload]);
 
-  const countIdle = useIdle(500);
+  const countIdle = useIdle(600);
   const count = useMemo(getCount, [countIdle]);
 
   useEffect(() => {
