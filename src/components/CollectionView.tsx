@@ -88,7 +88,7 @@ function CollectionView({ collection, className }: CollectionViewProps) {
           <RecordView cid={collection.id} key={item.id} item={item} />
         ))}
         <Button
-          onClick={() => addItem(collection.id, "key", "value")}
+          onClick={() => addItem(collection.id, "", "")}
           variant={"secondary"}
           className="w-full"
         >

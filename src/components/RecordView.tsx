@@ -41,6 +41,7 @@ function RecordView({ item, className, cid }: RecordViewProps) {
   const { id } = item;
   const status = getItemStatus(item);
   const statusColor = statusToColor(status);
+  const isNew = !item._key;
   return (
     <div
       className={cn(
@@ -53,6 +54,7 @@ function RecordView({ item, className, cid }: RecordViewProps) {
           onChange={(s) => updateItem(cid, id, { key: s })}
           value={item.key}
           className="flex-1 w-0"
+          initialEditing={isNew}
         />
         <Separator orientation="vertical" className="h-[24px]" />
         <EditText

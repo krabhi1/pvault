@@ -12,6 +12,7 @@ export type EditTextProps = {
   isSecret?: boolean;
   isMultiline?: boolean;
   className?: string;
+  initialEditing?: boolean;
 };
 function EditText({
   className,
@@ -20,8 +21,9 @@ function EditText({
   placeholder,
   isSecret,
   isMultiline,
+  initialEditing = false,
 }: EditTextProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(initialEditing);
   const inputRef = useRef<HTMLInputElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
