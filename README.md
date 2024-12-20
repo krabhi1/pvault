@@ -16,4 +16,4 @@ This  project provides a secure way to store private data by encrypting it befor
 
 ### Made with
 
-Vite, React, shadcn for UI, cloudflare with hono for api, Github gist api
+Vite, React, shadcn for UI, cloudflare with hono for api, Github gist api 
