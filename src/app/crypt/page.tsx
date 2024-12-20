@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { encryptData, decryptData } from "@/lib/crypt";
+import { encrypt, decrypt } from "@/common/crypt";
 import { useState } from "react";
 
 export default function Page() {
@@ -14,7 +14,7 @@ export default function Page() {
   async function onEncrypt() {
     if (decrypted && key) {
       try {
-        const encrypted = await encryptData(key, decrypted);
+        const encrypted = await encrypt(decrypted,key);
         setEncrypted(encrypted);
       } catch (error: any) {
         console.error(error);
@@ -28,7 +28,7 @@ export default function Page() {
   async function onDecrypt() {
     if (encrypted && key) {
       try {
-        const decrypted = await decryptData(key, encrypted);
+        const decrypted = await decrypt(encrypted,key);
         setDecrypted(decrypted);
       } catch (error: any) {
         console.error(error);

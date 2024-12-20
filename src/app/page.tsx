@@ -8,7 +8,7 @@ import { dataRpc } from "@/configs/rpc";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePromise } from "@/hooks/use-promise";
 import { toast } from "@/hooks/use-toast";
-import { decryptData } from "@/lib/crypt";
+import { decrypt } from "@/common/crypt";
 import { useAppStore } from "@/store/app-store";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { ClientRequestOptions, InferRequestType } from "hono/client";
@@ -54,7 +54,7 @@ export default function Page() {
     if (data) {
       //decrypt
       (async () => {
-        const decrypted = await decryptData(password, data);
+        const decrypted = await decrypt(data, password);
         console.log(decrypted);
         load(decrypted);
         // merge changes

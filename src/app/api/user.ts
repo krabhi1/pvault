@@ -10,9 +10,9 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { decrypt, encrypt } from "@/server/crypt";
 import { upsert, getFiles, remove, getFileContent } from "@/server/github";
 import { env } from "@/server/env";
+import { encrypt } from "@/common/crypt";
 
 type Env = {
   Variables: {
@@ -49,9 +49,9 @@ const app = new Hono<Env>()
         throw new HTTPException(409, { message: "Username already exist" });
       }
 
-      let encryptedData = encrypt(DEFAULT_DATA, password);
+      let encryptedData = await encrypt(DEFAULT_DATA, password);
       // encrypt with server key
-      encryptedData = encrypt(encryptedData, env.dataEncryptionKey);
+      encryptedData = await encrypt(encryptedData, env.dataEncryptionKey);
       //create file for user
       await upsert(username, encryptedData);
 

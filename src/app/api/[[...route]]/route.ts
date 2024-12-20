@@ -7,7 +7,7 @@ import data from "../data";
 import { HTTPException } from "hono/http-exception";
 import { makeResponse, handleError } from "@/server/utils";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 const app = new Hono().basePath("/api");
 app.use(logger());

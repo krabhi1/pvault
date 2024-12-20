@@ -6,9 +6,9 @@ import {
   makeResponse,
   zHttpExceptionHook,
 } from "@/server/utils";
-import { decrypt, encrypt } from "@/server/crypt";
 import { env } from "@/server/env";
 import { getFileContent, upsert } from "@/server/github";
+import { decrypt, encrypt } from "@/common/crypt";
 type Env = {
   Variables: {
     authUser?: {
@@ -32,7 +32,10 @@ const app = new Hono<Env>()
       const { encryptedData } = c.req.valid("json");
       const { username } = c.var.authUser!!;
       //second layer encryption
-      const encryptedData2 = encrypt(encryptedData, env.dataEncryptionKey);
+      const encryptedData2 = await encrypt(
+        encryptedData,
+        env.dataEncryptionKey
+      );
       //update the gist file
       await upsert(username, encryptedData2);
 
@@ -42,7 +45,7 @@ const app = new Hono<Env>()
   .get("", handleBasicAuth, async (c) => {
     const { username } = c.var.authUser!!;
     let data = await getFileContent(username);
-    data = decrypt(data, env.dataEncryptionKey);
+    data = await decrypt(data, env.dataEncryptionKey);
     return makeResponse(c, { data }, 200);
   });
 

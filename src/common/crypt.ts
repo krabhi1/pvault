@@ -46,10 +46,7 @@ async function deriveKey(
 }
 
 // Encrypt data function
-export async function encryptData(
-  password: string,
-  data: string
-): Promise<string> {
+export async function encrypt(data: string, password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(16)); // Generate random salt
   const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate random IV (12 bytes for AES-GCM)
   const key = await deriveKey(password, salt);
@@ -86,9 +83,8 @@ export async function encryptData(
 }
 
 // Decrypt data function
-export async function decryptData(password: string, encryptedString: string) {
+export async function decrypt(encryptedString: string, password: string) {
   const parts = encryptedString.split("|");
-
   if (parts.length !== 5 || parts[0] !== "v1") {
     throw new Error("Invalid encrypted data format");
   }
@@ -120,17 +116,3 @@ export async function decryptData(password: string, encryptedString: string) {
   const decoder = new TextDecoder();
   return decoder.decode(decryptedData);
 }
-
-// Example usage
-async function testEncryptionDecryption() {
-  const password = "123"; // Example password
-  const data = "This is a secret message"; // Data to encrypt
-
-  const encrypted = await encryptData(password, data);
-  console.log("Encrypted Data:", encrypted);
-
-  const decrypted = await decryptData(password, encrypted);
-  console.log("Decrypted Data:", decrypted);
-}
-
-testEncryptionDecryption();

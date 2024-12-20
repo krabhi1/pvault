@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "./ui/checkbox";
 import { useAppStore, useShallowAppStore } from "@/store/app-store";
 import { dataRpc, useRpc } from "@/configs/rpc";
-import { encryptData } from "@/lib/crypt";
+import { encrypt } from "@/common/crypt";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -71,9 +71,9 @@ function Header({ onUpload }: HeaderProps) {
     mutate(
       {
         json: {
-          encryptedData: await encryptData(
-            password,
-            JSON.stringify(useAppStore.getState().getUploadData())
+          encryptedData: await encrypt(
+            JSON.stringify(useAppStore.getState().getUploadData()),
+            password
           ),
         },
       },

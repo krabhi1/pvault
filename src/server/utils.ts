@@ -3,9 +3,9 @@ import { Context } from "hono";
 import { StatusCode } from "hono/utils/http-status";
 import axios from "axios";
 import { getFileContent, getFiles } from "./github";
-import { decrypt } from "./crypt";
 import { basicAuth } from "hono/basic-auth";
 import { env } from "./env";
+import { decrypt } from "@/common/crypt";
 
 // export async function isUserExist(name: string) {
 //   try {
@@ -73,7 +73,7 @@ export async function verifyUser(username: string, password: string) {
   try {
     data = await getFileContent(username);
     //decrypt it with server key
-    data = decrypt(data, env.dataEncryptionKey);
+    data = await decrypt(data, env.dataEncryptionKey);
   } catch (error) {
     if (error instanceof HTTPException) {
       if (error.status == 404)
@@ -83,7 +83,7 @@ export async function verifyUser(username: string, password: string) {
   }
   try {
     console.log(data, password);
-    decrypt(data, password);
+    await decrypt(data, password);
   } catch (error) {
     //TODO check if really password is wrong by check the error
     console.log(error);
